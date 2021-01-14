@@ -1,7 +1,7 @@
 import configBot as configBot
 import translateTime as myTime
 import happyDay as happyDay
-from tz2.manager import startTurnaroundPattern as tz2
+from turnAround.manager import startTurnaroundPattern as tz2
 import telebot
 import os
 import re
