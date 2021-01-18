@@ -61,7 +61,7 @@ def trendSort(pathlist):
             trendDown(df, pathlist, i)
             df['ema8'] = talib.EMA(df['Close'].values, timeperiod=8)  # добавляем столбец с расчитанным SMA
             df['ema14'] = talib.EMA(df['Close'].values, timeperiod=14)  # добавляем столбец с расчитанным SMA
-            trendNumber = df[-10:].loc[df.ema8 > df.ema14]  # берем 10 дней, 8 средняя выше 14
+            trendNumber = df[-10:].loc[df.ema8 > df.ema14]  # берем 8 дней, 8 средняя выше 14
             if trendNumber.shape[0] >= 5:
                 count = 0
                 firstIndex = 1
