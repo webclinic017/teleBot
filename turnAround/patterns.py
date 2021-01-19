@@ -14,7 +14,7 @@ def tickers(folder):
 
 def trendUpRed(candle1, candle2, candle3):  # восходящий тренд красный пин бар
     if (candle1.Green > 0) & (candle1.bodyGreen >= 0.7):
-        if ((list(candle2.PatternRedHighShadow)[0]) | ((candle2.bodyRed>0.45) & (candle2.bodyRed<0.55))) & (candle2.High > candle1.High) & (
+        if ((list(candle2.PatternRedHighShadow)[0]) | ((candle2.PatternRedEqShadows) & (candle2.bodyRed>0.45) & (candle2.bodyRed<0.55))) & (candle2.High > candle1.High) & (
         (candle2.Close >= (candle1.Close - ((candle1.Close - candle1.Open) * 0.3)))) & (
                 candle2.Low > (((candle1.High - candle1.Low) / 2) + candle1.Low)) & (
                 candle2.Open > candle1.Close):
@@ -27,7 +27,7 @@ def trendUpRed(candle1, candle2, candle3):  # восходящий тренд к
 
 def trendUpGreen(candle1, candle2, candle3):  # восходящий тренд зеленый пин бар
     if (candle1.Green > 0) & (candle1.bodyGreen >= 0.7):
-        if ((list(candle2.PatternGreenHighShadow)[0]) | ((candle2.bodyGreen > 0.45) & (candle2.bodyGreen < 0.55))) & (candle2.High > candle1.High) & (
+        if ((list(candle2.PatternGreenHighShadow)[0]) | ((candle2.PatternGreenEqShadows) & (candle2.bodyGreen > 0.45) & (candle2.bodyGreen < 0.55))) & (candle2.High > candle1.High) & (
                 candle2.Open >= (candle1.Close - ((candle1.Close - candle1.Open) * 0.3))) & (
                 candle2.Close > candle1.Close):
             if (candle3.Red > 0) & (candle3.Open <= (((candle2.Close - candle2.Open) / 2) + candle2.Open)) & (
@@ -38,7 +38,7 @@ def trendUpGreen(candle1, candle2, candle3):  # восходящий тренд 
 
 def trendDownRed(candle1, candle2, candle3):  # нисходящий тренд красный пин бар
     if (candle1.Red > 0) & (candle1.bodyRed >= 0.7):
-        if ((list(candle2.PatternRedBottomShadow)[0]) | ((candle2.bodyRed>0.45) & (candle2.bodyRed<0.55))) & (candle2.Close <= candle1.Low) & (candle2.Low < candle1.Low) & (
+        if ((list(candle2.PatternRedBottomShadow)[0]) | ((candle2.PatternRedEqShadows) & (candle2.bodyRed>0.45) & (candle2.bodyRed<0.55))) & (candle2.Close <= candle1.Low) & (candle2.Low < candle1.Low) & (
                 candle2.Open >= (candle1.Close - ((candle1.Open - candle1.Close) * 0.3))):
             if (candle3.Green > 0) & (candle3.Close > candle2.High) & (
                     candle3.Open >= (candle2.Close - ((candle2.High - candle2.Low) * 0.15))) & (
@@ -50,7 +50,7 @@ def trendDownRed(candle1, candle2, candle3):  # нисходящий тренд 
 def trendDownGreen(candle1, candle2, candle3):  # нисходящий тренд зеленый пин бар
     if (candle1.Red > 0) & (candle1.bodyRed >= 0.65):
         #print(1,candle2.Close <= ((candle1.Open - candle1.Close) * 0.3) + candle1.Close)
-        if ((list(candle2.PatternGreenBottomShadow)[0]) | ((candle2.bodyGreen > 0.45) & (candle2.bodyGreen < 0.55))) & (
+        if ((list(candle2.PatternGreenBottomShadow)[0]) | ((candle2.PatternGreenEqShadows) & (candle2.bodyGreen > 0.45) & (candle2.bodyGreen < 0.55))) & (
                 candle2.High <= (((candle1.High - candle1.Low) / 2) + candle1.Low)) & (
                 candle2.Close <= ((candle1.Open - candle1.Close) * 0.30) + candle1.Close) & (
                 candle2.Open <= candle1.Low) & (candle2.Low < candle1.Low):
@@ -80,6 +80,6 @@ def anyPattern(folder, folderName):
             df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
             addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName)
 
-#name = '20210118_10d60m'
+#name = '20210116_10d60m'
 #folder1 = '/home/linac/Рабочий стол/data/'+ name
 #anyPattern(folder1,name)

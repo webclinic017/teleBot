@@ -21,7 +21,8 @@ def download(period1, interval1):
         os.mkdir(pathUp)
         os.mkdir(pathDown)
     except FileExistsError:
-        return [path, pathUp, pathDown, folderName]  # если каталоги уже существуют, то пропускаем скачивание
+        pass
+        #return [path, pathUp, pathDown, folderName]  # если каталоги уже существуют, то пропускаем скачивание
 
     ticker_list = []
     with open('/home/linac/Рабочий стол/data/tickers/tickers.csv', 'r') as str0:

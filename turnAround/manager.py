@@ -11,7 +11,7 @@ import re
 Управляет скачиванием данных, определением тренда и запуском стратегий
 '''
 '''
-timeFrame = {'день': ['60d', '1d'], 'час': ['10d', '60m'], '30': ['10d', '30m'], '15': ['10d', '15m']}
+timeFrame = {'день': ['60d', '1d'], 'час': ['10d', '60m'], '30': ['10d', '30m'], '15': ['8d', '15m']}
 
 pathList1 = dd(timeFrame.get('день')[0], timeFrame.get('день')[1])
 ts(pathList1)
@@ -33,7 +33,7 @@ patterns.anyPattern(pathList4[2], pathList[-1])
 
 def startTurnaroundPattern(tf):
     allFolders = []
-    timeFrame = {'день': ['60d', '1d'], 'час': ['10d', '60m'], '30': ['10d', '30m'], '15': ['7d', '15m'], '5': ['1d', '5m']}
+    timeFrame = {'день': ['60d', '1d'], 'час': ['10d', '60m'], '30': ['6d', '30m'], '15': ['4d', '15m'], '5': ['1d', '5m']}
     if re.search(r"[в|В]се$", str(tf)):
         for i in timeFrame.keys():
             pathList = dd(timeFrame.get(i)[0], timeFrame.get(i)[1])
