@@ -1,5 +1,4 @@
 import pandas as pd
-import time
 import requests
 import threading as thr
 import yfinance as yf
@@ -19,10 +18,7 @@ trendSort получает на вход лист из 3 путей, по 1 пу
 pathList - лист из 3 путей, i - название текущего документа. Во второй путь копируются отобранные файлы 
 восходящего тренда, в 3 путь нисходящего. Оба метода ничего не возвращают.)
 '''
-timeStart = time.time()
-strTickers = 'https://finviz.com/screener.ashx?v=211&ft=3&t='
 allCsv = []
-
 
 def trendDown(df, pathList, i):
     try:
@@ -80,5 +76,3 @@ def trendSort(pathlist):
                         break
         except:
             pass
-
-# print((time.time() - timeStart)/60, 'minutes.')

@@ -10,30 +10,10 @@ import re
 '''
 Управляет скачиванием данных, определением тренда и запуском стратегий
 '''
-'''
-timeFrame = {'день': ['60d', '1d'], 'час': ['10d', '60m'], '30': ['10d', '30m'], '15': ['8d', '15m']}
-
-pathList1 = dd(timeFrame.get('день')[0], timeFrame.get('день')[1])
-ts(pathList1)
-patterns.anyPattern(pathList1[1], pathList[-1])
-patterns.anyPattern(pathList1[2], pathList[-1])
-pathList2 = dd(timeFrame.get('час')[0], timeFrame.get('час')[1])
-ts(pathList2)
-patterns.anyPattern(pathList2[1], pathList[-1])
-patterns.anyPattern(pathList2[2], pathList[-1])
-pathList3 = dd(timeFrame.get('30')[0], timeFrame.get('30')[1])
-ts(pathList3)
-patterns.anyPattern(pathList3[1], pathList[-1])
-patterns.anyPattern(pathList3[2], pathList[-1])
-pathList4 = dd(timeFrame.get('15')[0], timeFrame.get('15')[1])
-ts(pathList4)
-patterns.anyPattern(pathList4[1], pathList[-1])
-patterns.anyPattern(pathList4[2], pathList[-1])
-'''
 
 def startTurnaroundPattern(tf):
     allFolders = []
-    timeFrame = {'день': ['60d', '1d'], 'час': ['10d', '60m'], '30': ['6d', '30m'], '15': ['4d', '15m'], '5': ['1d', '5m']}
+    timeFrame = {'День': ['60d', '1d'], 'Час': ['10d', '60m'], '30': ['6d', '30m'], '15': ['4d', '15m'], '5': ['1d', '5m']}
     if re.search(r"[в|В]се$", str(tf)):
         for i in timeFrame.keys():
             pathList = dd(timeFrame.get(i)[0], timeFrame.get(i)[1])
@@ -42,13 +22,9 @@ def startTurnaroundPattern(tf):
             patterns.anyPattern(pathList[2], pathList[-1])
             allFolders += pathList[:-1] #исключаем folderName
     else:
-        #try:
         pathList = dd(timeFrame.get(tf)[0], timeFrame.get(tf)[1])
         ts(pathList)
         patterns.anyPattern(pathList[1], pathList[-1])
         patterns.anyPattern(pathList[2], pathList[-1])
         allFolders += pathList[:-1] #исключаем folderName
-        #except:
-         #   print("Неправильно указан тайм-фрейм")
     return allFolders
-
