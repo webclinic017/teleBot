@@ -61,8 +61,31 @@ def trendDownGreen(candle1, candle2, candle3):  # нисходящий трен�
     return False
 
 
-def anyPattern(folder, folderName):
+def innerGreen(candle1, candle2, candle3):  # trendUp innerGreen
+    if (candle1.Green > 0) & (candle1.bodyGreen >= 0.6):
+        if ((candle2.Red > 0) & (candle2.bodyRed >= 0.4)) & (
+                (candle2.Close <= candle1.Open) & (candle2.Open >= candle1.High)):
+            if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                return True
+            if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                return True
+    return False
+
+
+def innerRed(candle1, candle2, candle3):  # trendUp innerRed
+    if ((candle1.Green > 0) & (candle1.bodyGreen >= 0.75)) & (
+            (candle1.Close >= candle2.Open) & (candle1.Open <= candle2.Close)):
+        if (candle2.Red > 0) & (candle2.bodyRed >= 0.4):
+            if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                return True
+            if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                return True
+    return False
+
+
+def anyPattern(folder, folderName, patternName):
     ticks = tickers(folder)
+    funcs = {'Разворот': [trendUpRed, trendUpGreen, trendDownRed, trendDownGreen], 'Вложенные': [innerGreen, innerRed]}
     for i in ticks:
         df = pd.read_csv(folder + '/' + i)
         if 'Date' not in df:  # на мелких тф колонка называется Datetime
@@ -74,13 +97,14 @@ def anyPattern(folder, folderName):
             c3 = candles.Candle(df[-1:])
         except ZeroDivisionError:
             continue
-        if (trendUpRed(c1, c2, c3) | trendUpGreen(c1, c2, c3) | trendDownRed(c1, c2, c3) | trendDownGreen(c1, c2, c3)):
-            print(str(i)[:-4])
-            df['signal'] = np.nan
-            df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
-            addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName)
-
+        for j in funcs.get(patternName):
+            if j(c1, c2, c3):
+                print(str(i)[:-4])
+                df['signal'] = np.nan
+                df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
+                addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
 #name = 'test'
-#folder1 = '/home/linac/Рабочий стол/data/' + name
-#anyPattern(folder1, name)
+#patternName = 'Вложенные'
+#folder1 = '/home/linac/Рабочий стол/data/20210122_10d60m/down'
+#anyPattern(folder1, 'test', patternName)

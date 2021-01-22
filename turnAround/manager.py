@@ -11,20 +11,24 @@ import re
 Управляет скачиванием данных, определением тренда и запуском стратегий
 '''
 
-def startTurnaroundPattern(tf):
+timeFrame = {'День': ['60d', '1d'], 'Час': ['10d', '60m'], '30': ['6d', '30m'], '15': ['4d', '15m'], '5': ['1d', '5m']}
+funcs = {'Разворот': patterns.anyPattern, 'Вложенные': patterns.anyPattern}
+
+def startTurnaroundPattern(tf, patternName):
     allFolders = []
-    timeFrame = {'День': ['60d', '1d'], 'Час': ['10d', '60m'], '30': ['6d', '30m'], '15': ['4d', '15m'], '5': ['1d', '5m']}
+    global timeFrame
+    global funcs
     if re.search(r"[в|В]се$", str(tf)):
         for i in timeFrame.keys():
             pathList = dd(timeFrame.get(i)[0], timeFrame.get(i)[1])
             ts(pathList)
-            patterns.anyPattern(pathList[1], pathList[-1])
-            patterns.anyPattern(pathList[2], pathList[-1])
+            funcs.get(patternName)(pathList[1], pathList[-1], patternName)
+            funcs.get(patternName)(pathList[2], pathList[-1], patternName)
             allFolders += pathList[:-1] #исключаем folderName
     else:
         pathList = dd(timeFrame.get(tf)[0], timeFrame.get(tf)[1])
         ts(pathList)
-        patterns.anyPattern(pathList[1], pathList[-1])
-        patterns.anyPattern(pathList[2], pathList[-1])
+        funcs.get(patternName)(pathList[1], pathList[-1], patternName)
+        funcs.get(patternName)(pathList[2], pathList[-1], patternName)
         allFolders += pathList[:-1] #исключаем folderName
     return allFolders

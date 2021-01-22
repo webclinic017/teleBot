@@ -6,12 +6,12 @@ import mplfinance as mpf
 import numpy as np
 
 
-def mplot(df, signal, ticker, folder, folderName):
+def mplot(df, signal, ticker, folder, folderName, patternName):
     df.index = pd.to_datetime(df.Date)  # выставляем столбик с датой как индекс
     apds = [mpf.make_addplot(signal, type='scatter', color='r', markersize=70, marker='v')]
     # mpf.make_addplot(hammerMan.man(df), type='scatter', color='r', markersize=70, marker='o')]
     fig, axes = mpf.plot(df, type='candle',style ='yahoo', title = ticker, volume=True, mav=(10, 55), returnfig=True, addplot=apds, figscale=1.6)
-    axes[0].set_title('(' + folderName + ')' + "       buy = , stop = , take = ")
+    axes[0].set_title(patternName + '       (' + folderName + ')' + "       buy = , stop = , take = ")
     axes[2].set_title('ema 10,55 ')
     fig.savefig(folder + '/' + ticker + '.png')
     fig.clear()
