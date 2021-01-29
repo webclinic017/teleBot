@@ -61,10 +61,10 @@ def trendDownGreen(candle1, candle2, candle3):  # нисходящий трен�
     return False
 
 
-def innerGreen(candle1, candle2, candle3):  # trendUp innerGreen
-    if (candle1.Green > 0) & (candle1.bodyGreen >= 0.6):
-        if ((candle2.Red > 0) & (candle2.bodyRed >= 0.4)) & (
-                (candle2.Close <= candle1.Open) & (candle2.Open >= candle1.High)):
+def innerFirstTU(candle1, candle2, candle3):  # trendFirst innerFirst(green)
+    if (candle1.Green > 0) & (candle1.bodyGreen >= 0.75):
+        if ((candle2.Red > 0) & (candle2.bodyRed >= 0.55)) & (
+                (candle2.Close >= candle1.Open) & (candle2.Open <= candle1.Close) & (candle2.High <= candle1.High)):
             if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
                 return True
             if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
@@ -72,20 +72,43 @@ def innerGreen(candle1, candle2, candle3):  # trendUp innerGreen
     return False
 
 
-def innerRed(candle1, candle2, candle3):  # trendUp innerRed
+def innerSecondTU(candle1, candle2, candle3):  # trendUp innerSecond(red)
     if ((candle1.Green > 0) & (candle1.bodyGreen >= 0.75)) & (
-            (candle1.Close >= candle2.Open) & (candle1.Open <= candle2.Close)):
-        if (candle2.Red > 0) & (candle2.bodyRed >= 0.4):
+            (candle1.Close <= candle2.Open) & (candle1.Open >= candle2.Close)):
+        if (candle2.Red > 0) & (candle2.bodyRed >= 0.75):
             if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
                 return True
             if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                return True
+    return False
+
+
+def innerSecondTD(candle1, candle2, candle3):  # trendDown innerSecond(green)
+    if ((candle1.Red > 0) & (candle1.bodyRed >= 0.75)):
+        if ((candle2.Green > 0) & (candle2.bodyGreen >= 0.55) & (candle2.Open >= candle1.Close) & (
+                candle2.Low >= candle1.Low) & (
+                candle2.Close > (((candle1.Open - candle1.Close) / 2) + candle1.Close)) & (
+                candle2.Close <= candle1.Open)):
+            if ((candle3.Green > 0) & (candle3.Close > candle2.Close) & (
+                    candle3.Low >= (((candle2.Close - candle2.Open) * 0.49) + candle2.Open))):
+                return True
+    return False
+
+
+def innerFirstTD(candle1, candle2, candle3):  # trendDown innerFirst(red)
+    if ((candle1.Red > 0) & (candle1.bodyRed >= 0.75)):
+        if ((candle2.Green > 0) & (candle2.bodyGreen >= 0.75) & (candle2.Close >= candle1.Open) & (
+                candle2.Open <= candle1.Close) & (candle2.Low <= candle1.Low) & (candle2.High >= candle1.High)):
+            if ((candle3.Green > 0) & (candle3.Close > candle2.Close) & (
+                    candle3.Low >= (((candle2.Close - candle2.Open) * 0.49) + candle2.Open))):
                 return True
     return False
 
 
 def anyPattern(folder, folderName, patternName):
     ticks = tickers(folder)
-    funcs = {'Разворот': [trendUpRed, trendUpGreen, trendDownRed, trendDownGreen], 'Вложенные': [innerGreen, innerRed]}
+    funcs = {'Разворот': [trendUpRed, trendUpGreen, trendDownRed, trendDownGreen],
+             'Вложенные': [innerFirstTU, innerSecondTU, innerSecondTD, innerFirstTD]}
     for i in ticks:
         df = pd.read_csv(folder + '/' + i)
         if 'Date' not in df:  # на мелких тф колонка называется Datetime
@@ -104,7 +127,7 @@ def anyPattern(folder, folderName, patternName):
                 df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
                 addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
-#name = 'test'
-#patternName = 'Вложенные'
-#folder1 = '/home/linac/Рабочий стол/data/20210122_10d60m/down'
-#anyPattern(folder1, 'test', patternName)
+# name = 'test'
+# patternName = 'Вложенные'
+# folder1 = '/home/linac/Рабочий стол/data/20210122_10d60m/down'
+# anyPattern(folder1, 'test', patternName)

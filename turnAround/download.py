@@ -10,7 +10,16 @@ from datetime import datetime
 Возвращает лист из 3 путей и имя каталога folderName для его отоборажения на графике.
 '''
 
-def download(period1, interval1):
+def checkFolder(period1, interval1):
+    folderName = str(datetime.date(datetime.now())).replace('-', '') + '_' + str(period1) + str(interval1)
+    try:
+        os.mkdir('/home/linac/Рабочий стол/data/' + folderName + '/')
+    except:
+        return True
+    os.rmdir('/home/linac/Рабочий стол/data/' + folderName + '/')
+    return False
+
+def download(period1, interval1, key):
     folderName = str(datetime.date(datetime.now())).replace('-', '') + '_' + str(period1) + str(interval1)
     path = '/home/linac/Рабочий стол/data/' + folderName + '/'
     pathUp = '/home/linac/Рабочий стол/data/' + folderName + '/up/'
@@ -20,8 +29,10 @@ def download(period1, interval1):
         os.mkdir(pathUp)
         os.mkdir(pathDown)
     except FileExistsError:
-        pass
-
+        if key == 1:
+            return [path, pathUp, pathDown, folderName]  # если каталоги уже существуют, то пропускаем скачивание
+        else:
+            pass # если каталоги уже существуют, скачиваем их заново
     ticker_list = []
     with open('/home/linac/Рабочий стол/data/tickers/tickers.csv', 'r') as str0:
         for i in str0.read().split(" "):

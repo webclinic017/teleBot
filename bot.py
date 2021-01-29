@@ -11,6 +11,8 @@ from keyboa.keyboards import keyboa_maker
 bot = telebot.TeleBot(configBot.token)
 userMessage = ''
 botMessage = ''
+key = 0
+tf = ''
 
 
 @bot.message_handler(commands=['Разворот', 'Вложенные'], content_types=['text'])
@@ -24,14 +26,28 @@ def start_handler(message):
                                   text='Выберете интервал времени:')
 
 
-@bot.callback_query_handler(func=lambda call: True)  # ловим выбор пользователя на клавиатуре
-def answer(call):
+@bot.callback_query_handler(lambda query: query.data in ['5','15','30','Час','День','Все'])  # ловим выбор пользователя на клавиатуре
+def check(call):
     global botMessage
     global userMessage
+    global key
+    global tf
     bot.delete_message(userMessage.chat.id, botMessage.message_id)
-    bot.send_message(userMessage.chat.id, "Ищу" + userMessage.text[1:] + " на интервале времени: " + call.data)
+    tf = call.data
+    if not tz2(tf, userMessage.text[1:], key):
+        kb_YesNo = keyboa_maker(items=['Да', 'Нет'], copy_text_to_callback=True)
+        botMessage = bot.send_message(chat_id=userMessage.chat.id, reply_markup=kb_YesNo, text='Скачать данные снова?')
+    else: answer(call)
+
+@bot.callback_query_handler(lambda query: query.data in ['Да','Нет'])  # ловим выбор пользователя на клавиатуре
+def answer (call):
+    global key
+    key = 1 if call.data == 'Нет' else 2
+    if (call.data == 'Да') | (call.data == 'Нет'):
+        bot.delete_message(userMessage.chat.id, botMessage.message_id)
+    bot.send_message(userMessage.chat.id, "Ищу " + userMessage.text[1:] + " на интервале времени: " + tf)
     timeStart = time.time()
-    allFolders = tz2(call.data, userMessage.text[1:])
+    allFolders = tz2(tf, userMessage.text[1:], key)
     for i in allFolders:
         pngs = list(filter(lambda x: x.endswith('.png'), os.listdir(i)))
         for j in pngs:
@@ -41,7 +57,8 @@ def answer(call):
             time.sleep(.25)
     lost = int((time.time() - timeStart) / 60)
     bot.send_message(userMessage.chat.id,
-                     "Закончил поиск на интервале времени: " + call.data + ", на это ушло " + str(lost) + " минут")
+                     "Закончил поиск на интервале времени: " + tf + ", на это ушло " + str(lost) + " минут")
+    key = 0
 
 
 '''
