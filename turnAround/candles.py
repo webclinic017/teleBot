@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 
 
 class Candle():
@@ -10,7 +11,7 @@ class Candle():
         self.High = float(df.High)
         self.Close = float(df.Close)
         self.Volume = float(df.Volume)
-        self.Date = df.Date
+        self.Date = str(df.Date.values[0])
         self.Green = float(df.Close - df.Open)
         self.Red = float(df.Open - df.Close)
         self.bottomShadowGreen = float((df.Open - df.Low))# / (df.High - df.Low))

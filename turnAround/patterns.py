@@ -61,29 +61,31 @@ def trendDownGreen(candle1, candle2, candle3):  # нисходящий трен�
     return False
 
 
-def innerFirstTU(candle1, candle2, candle3):  # trendFirst innerFirst(green)
+def trendUpInnerFirst(candle1, candle2, candle3):  # trendFirst innerFirst(green)
     if (candle1.Green > 0) & (candle1.bodyGreen >= 0.75):
         if ((candle2.Red > 0) & (candle2.bodyRed >= 0.55)) & (
                 (candle2.Close >= candle1.Open) & (candle2.Open <= candle1.Close) & (candle2.High <= candle1.High)):
             if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
                 return True
             if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                print(1)
                 return True
     return False
 
 
-def innerSecondTU(candle1, candle2, candle3):  # trendUp innerSecond(red)
+def trendUpInnerSecond(candle1, candle2, candle3):  # trendUp innerSecond(red)
     if ((candle1.Green > 0) & (candle1.bodyGreen >= 0.75)) & (
             (candle1.Close <= candle2.Open) & (candle1.Open >= candle2.Close)):
         if (candle2.Red > 0) & (candle2.bodyRed >= 0.75):
             if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
                 return True
             if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                print(2)
                 return True
     return False
 
 
-def innerSecondTD(candle1, candle2, candle3):  # trendDown innerSecond(green)
+def trendDownInnerSecond(candle1, candle2, candle3):  # trendDown innerSecond(green)
     if ((candle1.Red > 0) & (candle1.bodyRed >= 0.75)):
         if ((candle2.Green > 0) & (candle2.bodyGreen >= 0.55) & (candle2.Open >= candle1.Close) & (
                 candle2.Low >= candle1.Low) & (
@@ -91,16 +93,18 @@ def innerSecondTD(candle1, candle2, candle3):  # trendDown innerSecond(green)
                 candle2.Close <= candle1.Open)):
             if ((candle3.Green > 0) & (candle3.Close > candle2.Close) & (
                     candle3.Low >= (((candle2.Close - candle2.Open) * 0.49) + candle2.Open))):
+                print(3)
                 return True
     return False
 
 
-def innerFirstTD(candle1, candle2, candle3):  # trendDown innerFirst(red)
+def trendDownInnerFirst(candle1, candle2, candle3):  # trendDown innerFirst(red)
     if ((candle1.Red > 0) & (candle1.bodyRed >= 0.75)):
         if ((candle2.Green > 0) & (candle2.bodyGreen >= 0.75) & (candle2.Close >= candle1.Open) & (
                 candle2.Open <= candle1.Close) & (candle2.Low <= candle1.Low) & (candle2.High >= candle1.High)):
             if ((candle3.Green > 0) & (candle3.Close > candle2.Close) & (
                     candle3.Low >= (((candle2.Close - candle2.Open) * 0.49) + candle2.Open))):
+                print(4)
                 return True
     return False
 
@@ -108,7 +112,8 @@ def innerFirstTD(candle1, candle2, candle3):  # trendDown innerFirst(red)
 def anyPattern(folder, folderName, patternName):
     ticks = tickers(folder)
     funcs = {'Разворот': [trendUpRed, trendUpGreen, trendDownRed, trendDownGreen],
-             'Вложенные': [innerFirstTU, innerSecondTU, innerSecondTD, innerFirstTD]}
+             'ВложенныеUp': [trendUpInnerFirst, trendUpInnerSecond],
+             'ВложенныеDown':[trendDownInnerSecond, trendDownInnerFirst]}
     for i in ticks:
         df = pd.read_csv(folder + '/' + i)
         if 'Date' not in df:  # на мелких тф колонка называется Datetime
@@ -118,16 +123,41 @@ def anyPattern(folder, folderName, patternName):
             c1 = candles.Candle(df[-3:-2])
             c2 = candles.Candle(df[-2:-1])
             c3 = candles.Candle(df[-1:])
+            #c4 = candles.Candle(df[1])
         except ZeroDivisionError:
             continue
+        if (patternName == 'Вложенные') & (folder.__contains__('up')):
+            patternName = patternName + 'Up'
+        if (patternName == 'Вложенные') & (folder.__contains__('down')):
+            patternName = patternName + 'Down'
         for j in funcs.get(patternName):
             if j(c1, c2, c3):
                 print(str(i)[:-4])
                 df['signal'] = np.nan
-                df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
-                addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
-# name = 'test'
-# patternName = 'Вложенные'
-# folder1 = '/home/linac/Рабочий стол/data/20210122_10d60m/down'
-# anyPattern(folder1, 'test', patternName)
+
+                trendUp = []
+                for t in range (0, df.shape[0]-6):
+                    try:
+                        c4 = candles.Candle(df[t+1 : t+2])
+                        c5 = candles.Candle(df[t+2 : t+3])
+                        c6 = candles.Candle(df[t+3 : t+4])
+                        c7 = candles.Candle(df[t+5 : t+6])
+                    except ZeroDivisionError:
+                        continue
+                    if (c4.High < c5.High < c6.High) & (c6.High > c7.High):
+                        trendUp.append((c6.Date,c6.High))
+
+                #print(trendUp)
+                #print(df.head())
+                df['trendUp'] = np.nan
+
+
+
+                df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
+                addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName, trendUp)
+
+#name = 'test'
+#patternName = 'Разворот'
+#folder1 = '/home/linac/Рабочий стол/data/test'
+#anyPattern(folder1, 'test', patternName)
