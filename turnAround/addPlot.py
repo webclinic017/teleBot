@@ -6,19 +6,18 @@ import mplfinance as mpf
 import numpy as np
 
 
-def mplot(df, signal, ticker, folder, folderName, patternName, trendUp):
+def mplot(df, signal, ticker, folder, folderName, patternName):
     df.index = pd.to_datetime(df.Date)  # выставляем столбик с датой как индекс
     apds = [mpf.make_addplot(signal, type='scatter', color='r', markersize=70, marker='v')]
-    # fig, axes = mpf.plot(df, type='candle', style='yahoo', title=ticker, volume=True, mav=(8, 13, 21, 55), returnfig=True,
-    #                    addplot=apds, figscale=1.6, alines = dict(alines = [(trendUp)], colors = 'r'))
 
     # объединияем все столбцы в один и ищем наиболее частые совпадения
     columnlist = ['Open', 'Close', 'High', 'Low']
     df2 = pd.concat(map(df.get, columnlist)).reset_index(drop=True)
+    df2 = df2.round(2) # округление
     lines = []
     count = 0
     for i in list(df2.value_counts()):
-        if i >= 4:
+        if i >= 3:
             lines.append(df2.value_counts().keys()[count])
         count += 1
     fig, axes = mpf.plot(df, type='candle', style='yahoo', title=ticker, volume=True, mav=(8, 13, 21, 55),
