@@ -19,7 +19,9 @@ startTurnaroundPattern - принимает на вход интервал(tf), 
 '''
 
 timeFrame = {'День': ['60d', '1d'], 'Час': ['10d', '60m'], '30': ['6d', '30m'], '15': ['4d', '15m'], '5': ['1d', '5m']}
-funcs = {'Разворот': patterns.anyPattern, 'Вложенные': patterns.anyPattern}
+funcs = {'Разворот': patterns.anyPattern, 'Вложенные': patterns.anyPattern, 'Рикошет': patterns.anyPattern,
+         'Все': patterns.anyPattern, 'Харами': patterns.anyPattern}
+
 
 def startTurnaroundPattern(tf, patternName, key):
     allFolders = []
@@ -27,9 +29,9 @@ def startTurnaroundPattern(tf, patternName, key):
     global funcs
     if re.search(r"[в|В]се$", str(tf)):
         check = []
-        for j in timeFrame.keys(): # проверяем, существуют ли каталоги
+        for j in timeFrame.keys():  # проверяем, существуют ли каталоги
             check.append(dCheck(timeFrame.get(j)[0], timeFrame.get(j)[1]))
-        if (check.__contains__(True)) & (key == 0): # если каталог существует и это первая проверка
+        if (check.__contains__(True)) & (key == 0):  # если каталог существует и это первая проверка
             return False
         elif (not (check.__contains__(True))) & (key == 0):
             return True
@@ -39,10 +41,11 @@ def startTurnaroundPattern(tf, patternName, key):
                 ts(pathList)
                 funcs.get(patternName)(pathList[1], pathList[-1], patternName)
                 funcs.get(patternName)(pathList[2], pathList[-1], patternName)
-                allFolders += pathList[:-1] #исключаем folderName
+                allFolders += pathList[:-1]  # исключаем folderName
             return allFolders
     else:
-        if (dCheck(timeFrame.get(tf)[0], timeFrame.get(tf)[1])) & (key == 0): # если каталог существует и это первая проверка:
+        if (dCheck(timeFrame.get(tf)[0], timeFrame.get(tf)[1])) & (
+                key == 0):  # если каталог существует и это первая проверка:
             return False
         elif (not (dCheck(timeFrame.get(tf)[0], timeFrame.get(tf)[1]))) & (key == 0):
             return True
@@ -51,5 +54,5 @@ def startTurnaroundPattern(tf, patternName, key):
             ts(pathList)
             funcs.get(patternName)(pathList[1], pathList[-1], patternName)
             funcs.get(patternName)(pathList[2], pathList[-1], patternName)
-            allFolders += pathList[:-1] #исключаем folderName
+            allFolders += pathList[:-1]  # исключаем folderName
         return allFolders

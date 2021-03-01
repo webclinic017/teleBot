@@ -15,7 +15,7 @@ key = 0
 tf = ''
 
 
-@bot.message_handler(commands=['Разворот', 'Вложенные'], content_types=['text'])
+@bot.message_handler(commands=['Разворот', 'Вложенные', 'Рикошет', 'Все', 'Харами'], content_types=['text'])
 def start_handler(message):
     global userMessage
     userMessage = message
@@ -49,12 +49,13 @@ def answer (call):
     timeStart = time.time()
     allFolders = tz2(tf, userMessage.text[1:], key)
     for i in allFolders:
+        time.sleep(2)
         pngs = list(filter(lambda x: x.endswith('.png'), os.listdir(i)))
         for j in pngs:
             img = open(i + j, 'rb')
             bot.send_photo(userMessage.chat.id, img)
             img.close()
-            time.sleep(.25)
+            time.sleep(3)
     lost = int((time.time() - timeStart) / 60)
     bot.send_message(userMessage.chat.id,
                      "Закончил поиск на интервале времени: " + tf + ", на это ушло " + str(lost) + " минут")
