@@ -14,6 +14,7 @@ def tickers(folder):
 
 df = ''
 folder = ''
+tick = ''
 
 
 def trendUpRed(candle0, candle1, candle2, candle3):  # восходящий тренд красный пин бар
@@ -142,18 +143,55 @@ def ricochet(candle0, candle1, candle2, candle3):
     return False
 
 
-def harami(candle0, candle1, candle2, candle3):
+'''
+первая зеленая свеча  не менее    65%   тело.   Хвосты  не трогаем пока.
+маленькая свеча: цвет не важен.  свеча волчок .додж.   расположение тела   
+закрытие/открытие  свечи  не   выше   1/3  сверху   и не ниже   1/3 снизу.  
+( если 1/25  меньше немного   одной трети. то можно тогда 1.25) 
+третья  проверочная : медвежья.  Закрытие равно или  ниже   открытия     первой свечи. 
+Между    маленькой второй и   третьей проверочной  могут быть   пара   или одна  свечей неопределенности   
+(доджики или   волчки,или  пинбары)  Если они закрываютсявыше  открытия первой свечи –они не считаются . 
+'''
+
+
+def haramiUp(candle0, candle1, candle2, candle3):
     if str(folder).__contains__('up'):  # trend up
         if ((candle0.Green > 0) & (candle0.bodyGreen >= 0.65)):
-            if ((candle1.Green > 0) & (candle1.bodyGreen >= 0.65) & (candle1.Close > candle0.High) & (
-                    candle1.Open >= (candle0.Open + ((candle0.Close - candle0.Open) * 0.5))) & (candle1.Open >= (
-                    (candle0.Close - candle0.Open) * 0.5))):
-                if ((candle2.Red > 0) & (candle2.PatternRedEqShadows) & (candle2.Low >= candle1.Low) & (
-                        candle2.High <= candle1.High) & (
-                        candle2.High <= (candle1.Close - ((candle1.Close - candle1.Open) * 0.15))) & (
-                        candle2.Low >= (candle1.Open + ((candle1.Close - candle1.Open) * 0.15)))):
-                    if ((candle3.Red > 0) & (candle3.Close <= candle1.Open)):
-                        return True
+            c1G = (candle1.Green > 0) & (
+                    candle1.Close <= (candle0.Close - ((candle0.Close - candle0.Open) * 0.25))) & (
+                          candle1.Open >= (candle0.Open + ((candle0.Close - candle0.Open) * 0.25)))
+            c1R = (candle1.Red > 0) & (
+                    candle1.Open <= (candle0.Close - ((candle0.Close - candle0.Open) * 0.25))) & (
+                          candle1.Close >= (candle0.Open + ((candle0.Close - candle0.Open) * 0.25)))
+            if (c1G | c1R):
+                c2R = (candle2.Red > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
+                            candle2.PatternRedEqShadows | candle2.PatternRedDoje | candle2.PatternRedHighShadow | candle2.PatternRedBottomShadow)
+                c2G = (candle2.Green > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
+                            candle2.PatternGreenEqShadows | candle2.PatternGreenDoje | candle2.PatternGreenHighShadow | candle2.PatternGreenBottomShadow)
+                if not (c2R | c2G):
+                    candle3 = candle2
+                if ((candle3.Red > 0) & (candle3.Close < candle0.Open)):
+                    return True
+    return False
+
+def haramiDown(candle0, candle1, candle2, candle3):
+    if str(folder).__contains__('down'):  # trend down
+        if ((candle0.Red > 0) & (candle0.bodyRed >= 0.65)):
+            c1G = (candle1.Green > 0) & (
+                    candle1.Close <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
+                          candle1.Open >= (candle0.Close + ((candle0.Open - candle0.Close) * 0.25)))
+            c1R = (candle1.Red > 0) & (
+                    candle1.Open <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
+                          candle1.Close >= (candle0.Close + ((candle0.Open - candle0.Close) * 0.25)))
+            if (c1G | c1R):
+                c2R = (candle2.Red > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
+                            candle2.PatternRedEqShadows | candle2.PatternRedDoje | candle2.PatternRedHighShadow | candle2.PatternRedBottomShadow)
+                c2G = (candle2.Green > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
+                            candle2.PatternGreenEqShadows | candle2.PatternGreenDoje | candle2.PatternGreenHighShadow | candle2.PatternGreenBottomShadow)
+                if not (c2R | c2G):
+                    candle3 = candle2
+                if ((candle3.Green > 0) & (candle3.Close > candle0.Open)):
+                    return True
     return False
 
 
@@ -206,6 +244,7 @@ def halfCandleInner(candle0, candle1, candle2, candle3):  # half
 
 def highVolumePattern(candle0, candle1, candle2, candle3):
     # метод ищет высокий объем среди последних 10 свечей (свеча X), предыдущие 3 свечи должны иметь объем меньше чем 60%X объема
+    # следующие 3 свечи после Х имеют снижение в объеме относительно предыдущей свечи
     v = []
     global df
     a = int(df.loc[:].Volume.mean() * 4)
@@ -213,13 +252,19 @@ def highVolumePattern(candle0, candle1, candle2, candle3):
     dfV.insert(0, 'Ind', range(0, len(dfV)))  # добавляем колнонку с цифровым индексом
     v = dfV.Ind[dfV.Volume > a].tolist()
     count = 0
+    flag = False
     # print(dfV)
     for i in v:
         if 3 <= i <= 5:
             for j in range(i - 3, i):
                 if int(dfV.loc[dfV.Ind == j].Volume) < int((dfV.loc[dfV.Ind == i].Volume * 0.60)):
                     count += 1
-            if count == 3:
+            # следующие 3 свечи по Х снижение объема
+            if int(dfV.loc[dfV.Ind == i + 1].Volume) < int((dfV.loc[dfV.Ind == i].Volume * 0.95)):
+                if int(dfV.loc[dfV.Ind == i + 2].Volume) < int((dfV.loc[dfV.Ind == i + 1].Volume * 0.95)):
+                    if int(dfV.loc[dfV.Ind == i + 3].Volume) < int((dfV.loc[dfV.Ind == i + 2].Volume * 0.95)):
+                        flag = True
+            if (count == 3) & flag:
                 return True
     return False
 
@@ -227,6 +272,7 @@ def highVolumePattern(candle0, candle1, candle2, candle3):
 def anyPattern(folder1, folderName, patternName):
     global df
     global folder
+    global tick
     folder = folder1
     patterns = [patternName]
     ticks = tickers(folder)
@@ -234,9 +280,10 @@ def anyPattern(folder1, folderName, patternName):
              'Вложенные': [trendUpInnerFirst, trendUpInnerSecond, trendDownInnerSecond, trendDownInnerFirst],
              'Рикошет': [ricochet],
              'Пистолет': [halfCandleInner],
-             'Харами': [harami]}
+             'Харами': [haramiUp, haramiDown]}
 
     for i in ticks:
+        tick = i
         df = pd.read_csv(folder + '/' + i)
         if 'Date' not in df:  # на мелких тф колонка называется Datetime
             df.rename(columns={'Datetime': 'Date'}, inplace=True)
@@ -259,7 +306,7 @@ def anyPattern(folder1, folderName, patternName):
                     df['signal'] = np.nan
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
                     addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
-# name = 'Ric'
-# patternName = 'Ric'
-# folder1 = '/home/linac/Рабочий стол/data/down/'
-# anyPattern(folder1, 'test', patternName)
+#name = 'Харами'
+#patternName = 'Харами'
+#folder1 = '/home/linac/Рабочий стол/data/20210302_60d1d/up/'
+#anyPattern(folder1, 'test', patternName)
