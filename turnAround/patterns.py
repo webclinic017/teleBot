@@ -144,50 +144,56 @@ def ricochet(candle0, candle1, candle2, candle3):
 
 
 '''
-первая зеленая свеча  не менее    65%   тело.   Хвосты  не трогаем пока.
-маленькая свеча: цвет не важен.  свеча волчок .додж.   расположение тела   
-закрытие/открытие  свечи  не   выше   1/3  сверху   и не ниже   1/3 снизу.  
-( если 1/25  меньше немного   одной трети. то можно тогда 1.25) 
-третья  проверочная : медвежья.  Закрытие равно или  ниже   открытия     первой свечи. 
-Между    маленькой второй и   третьей проверочной  могут быть   пара   или одна  свечей неопределенности   
-(доджики или   волчки,или  пинбары)  Если они закрываютсявыше  открытия первой свечи –они не считаются . 
+Ребепнок при тренде  вверх :  тени не выходят за пределы тела матери,  
+если не равномерное распределение теней , то    направление    более длинной тени    
+вверх, а не вниз. лувше  тени равномерно.  И лучше  короткие.  Тело  не  менее 65 % 
 '''
 
 
 def haramiUp(candle0, candle1, candle2, candle3):
     if str(folder).__contains__('up'):  # trend up
         if ((candle0.Green > 0) & (candle0.bodyGreen >= 0.65)):
-            c1G = (candle1.Green > 0) & (
-                    candle1.Close <= (candle0.Close - ((candle0.Close - candle0.Open) * 0.25))) & (
+            c1G = (candle1.Green > 0) & (candle1.bodyGreen >= 0.65) & (candle1.High <= candle0.Close) & (
+                    candle1.Low >= candle0.Open) & (candle1.highShadowGreen >= candle1.bottomShadowGreen) & (
+                          candle1.Close <= (candle0.Close - ((candle0.Close - candle0.Open) * 0.25))) & (
                           candle1.Open >= (candle0.Open + ((candle0.Close - candle0.Open) * 0.25)))
-            c1R = (candle1.Red > 0) & (
-                    candle1.Open <= (candle0.Close - ((candle0.Close - candle0.Open) * 0.25))) & (
+            c1R = (candle1.Red > 0) & (candle1.bodyRed >= 0.65) & (candle1.High <= candle0.Close) & (
+                    candle1.Low >= candle0.Open) & (candle1.highShadowRed >= candle1.bottomShadowRed) & (
+                          candle1.Open <= (candle0.Close - ((candle0.Close - candle0.Open) * 0.25))) & (
                           candle1.Close >= (candle0.Open + ((candle0.Close - candle0.Open) * 0.25)))
             if (c1G | c1R):
                 c2R = (candle2.Red > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
-                            candle2.PatternRedEqShadows | candle2.PatternRedDoje | candle2.PatternRedHighShadow | candle2.PatternRedBottomShadow)
+                        candle2.PatternRedEqShadows | candle2.PatternRedDoje | candle2.PatternRedHighShadow | candle2.PatternRedBottomShadow)
                 c2G = (candle2.Green > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
-                            candle2.PatternGreenEqShadows | candle2.PatternGreenDoje | candle2.PatternGreenHighShadow | candle2.PatternGreenBottomShadow)
+                        candle2.PatternGreenEqShadows | candle2.PatternGreenDoje | candle2.PatternGreenHighShadow | candle2.PatternGreenBottomShadow)
                 if not (c2R | c2G):
                     candle3 = candle2
                 if ((candle3.Red > 0) & (candle3.Close < candle0.Open)):
                     return True
     return False
 
+
+'''Ребенок   при   тренде вниз:      тело   не менее    65%  .  
+ тени желательно маленькие.  Если не раномерное распределение, то   
+ большая часть должна быть внизу, а не наверху.  У  ребенка.  Тени не должны   выходить за пределы   тела матери  .'''
+
+
 def haramiDown(candle0, candle1, candle2, candle3):
     if str(folder).__contains__('down'):  # trend down
         if ((candle0.Red > 0) & (candle0.bodyRed >= 0.65)):
-            c1G = (candle1.Green > 0) & (
-                    candle1.Close <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
+            c1G = (candle1.Green > 0) & (candle1.bodyGreen >= 0.65) & (candle1.High <= candle0.Open) & (
+                    candle1.Low >= candle0.Close) & (candle1.highShadowGreen <= candle1.bottomShadowGreen) & (
+                          candle1.Close <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
                           candle1.Open >= (candle0.Close + ((candle0.Open - candle0.Close) * 0.25)))
-            c1R = (candle1.Red > 0) & (
-                    candle1.Open <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
+            c1R = (candle1.Red > 0) & (candle1.bodyRed >= 0.65) & (candle1.High <= candle0.Open) & (
+                    candle1.Low >= candle0.Close) & (candle1.highShadowRed <= candle1.bottomShadowRed) & (
+                          candle1.Open <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
                           candle1.Close >= (candle0.Close + ((candle0.Open - candle0.Close) * 0.25)))
             if (c1G | c1R):
                 c2R = (candle2.Red > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
-                            candle2.PatternRedEqShadows | candle2.PatternRedDoje | candle2.PatternRedHighShadow | candle2.PatternRedBottomShadow)
+                        candle2.PatternRedEqShadows | candle2.PatternRedDoje | candle2.PatternRedHighShadow | candle2.PatternRedBottomShadow)
                 c2G = (candle2.Green > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
-                            candle2.PatternGreenEqShadows | candle2.PatternGreenDoje | candle2.PatternGreenHighShadow | candle2.PatternGreenBottomShadow)
+                        candle2.PatternGreenEqShadows | candle2.PatternGreenDoje | candle2.PatternGreenHighShadow | candle2.PatternGreenBottomShadow)
                 if not (c2R | c2G):
                     candle3 = candle2
                 if ((candle3.Green > 0) & (candle3.Close > candle0.Open)):
@@ -306,7 +312,7 @@ def anyPattern(folder1, folderName, patternName):
                     df['signal'] = np.nan
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
                     addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
-#name = 'Харами'
-#patternName = 'Харами'
-#folder1 = '/home/linac/Рабочий стол/data/20210302_60d1d/up/'
-#anyPattern(folder1, 'test', patternName)
+# name = 'Харами'
+# patternName = 'Харами'
+# folder1 = '/home/linac/Рабочий стол/data/20210302_60d1d/up/'
+# anyPattern(folder1, 'test', patternName)
