@@ -143,13 +143,6 @@ def ricochet(candle0, candle1, candle2, candle3):
     return False
 
 
-'''
-Ребепнок при тренде  вверх :  тени не выходят за пределы тела матери,  
-если не равномерное распределение теней , то    направление    более длинной тени    
-вверх, а не вниз. лувше  тени равномерно.  И лучше  короткие.  Тело  не  менее 65 % 
-'''
-
-
 def haramiUp(candle0, candle1, candle2, candle3):
     if str(folder).__contains__('up'):  # trend up
         if ((candle0.Green > 0) & (candle0.bodyGreen >= 0.65)):
@@ -173,30 +166,49 @@ def haramiUp(candle0, candle1, candle2, candle3):
     return False
 
 
-'''Ребенок   при   тренде вниз:      тело   не менее    65%  .  
- тени желательно маленькие.  Если не раномерное распределение, то   
- большая часть должна быть внизу, а не наверху.  У  ребенка.  Тени не должны   выходить за пределы   тела матери  .'''
-
-
-def haramiDown(candle0, candle1, candle2, candle3):
+def haramiDown(c0, c1, c2, c3):
     if str(folder).__contains__('down'):  # trend down
-        if ((candle0.Red > 0) & (candle0.bodyRed >= 0.65)):
-            c1G = (candle1.Green > 0) & (candle1.bodyGreen >= 0.65) & (candle1.High <= candle0.Open) & (
-                    candle1.Low >= candle0.Close) & (candle1.highShadowGreen <= candle1.bottomShadowGreen) & (
-                          candle1.Close <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
-                          candle1.Open >= (candle0.Close + ((candle0.Open - candle0.Close) * 0.25)))
-            c1R = (candle1.Red > 0) & (candle1.bodyRed >= 0.65) & (candle1.High <= candle0.Open) & (
-                    candle1.Low >= candle0.Close) & (candle1.highShadowRed <= candle1.bottomShadowRed) & (
-                          candle1.Open <= (candle0.Open - ((candle0.Open - candle0.Close) * 0.25))) & (
-                          candle1.Close >= (candle0.Close + ((candle0.Open - candle0.Close) * 0.25)))
+        if ((c0.Red > 0) & (c0.bodyRed >= 0.65)):
+            c1G = (c1.Green > 0) & (c1.bodyGreen >= 0.65) & (c1.High <= c0.Open) & (c1.Low >= c0.Close) & (
+                        c1.highShadowGreen <= c1.bottomShadowGreen) & (
+                              c1.Close <= (c0.Open - ((c0.Open - c0.Close) * 0.25))) & (
+                              c1.Open >= (c0.Close + ((c0.Open - c0.Close) * 0.25)))
+            c1R = (c1.Red > 0) & (c1.bodyRed >= 0.65) & (c1.High <= c0.Open) & (c1.Low >= c0.Close) & (
+                        c1.highShadowRed <= c1.bottomShadowRed) & (
+                              c1.Open <= (c0.Open - ((c0.Open - c0.Close) * 0.25))) & (
+                              c1.Close >= (c0.Close + ((c0.Open - c0.Close) * 0.25)))
             if (c1G | c1R):
-                c2R = (candle2.Red > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
-                        candle2.PatternRedEqShadows | candle2.PatternRedDoje | candle2.PatternRedHighShadow | candle2.PatternRedBottomShadow)
-                c2G = (candle2.Green > 0) & (candle2.High < candle0.High) & (candle2.Low > candle0.Low) & (
-                        candle2.PatternGreenEqShadows | candle2.PatternGreenDoje | candle2.PatternGreenHighShadow | candle2.PatternGreenBottomShadow)
+                c2R = (c2.Red > 0) & (c2.High < c0.High) & (c2.Low > c0.Low) & (
+                        c2.PatternRedEqShadows | c2.PatternRedDoje | c2.PatternRedHighShadow | c2.PatternRedBottomShadow)
+                c2G = (c2.Green > 0) & (c2.High < c0.High) & (c2.Low > c0.Low) & (
+                        c2.PatternGreenEqShadows | c2.PatternGreenDoje | c2.PatternGreenHighShadow | c2.PatternGreenBottomShadow)
                 if not (c2R | c2G):
-                    candle3 = candle2
-                if ((candle3.Green > 0) & (candle3.Close > candle0.Open)):
+                    c3 = c2
+                if ((c3.Green > 0) & (c3.Close > c0.Open)):
+                    return True
+    return False
+
+
+def raiseUp(c0, c1, c2, c3):
+    if str(folder).__contains__('up'):  # trend up
+        if ((c1.Green > 0) & (c1.bodyGreen >= 0.6) & (c1.highShadowGreen >= c1.bottomShadowGreen)):
+            print(1,tick)
+            if ((c2.Red > 0) & (c2.bodyRed >= 0.6) & (
+                    c2.Open < (c1.Close - ((c1.Close - c1.Open) * 0.16))) & (
+                    c2.Close < (c1.Close - ((c1.Close - c1.Open) * 0.16)))):
+                print(2)
+                if ((c3.Red > 0) & (c3.bodyRed >= 0.65) & (c3.Close < c2.Low) & (c3.Open <= c1.Open)):
+                    return True
+    return False
+
+
+def raiseDown(c0, c1, c2, c3):
+    if str(folder).__contains__('down'):  # trend down
+        if ((c1.Red > 0) & (c1.bodyRed >= 0.75) & (c1.bottomShadowRed >= c1.highShadowRed)):
+            if ((c2.Green > 0) & (c2.bodyGreen >= 0.65) & (
+                    c2.Open > (c1.Close + ((c1.Open - c1.Close) * 0.16))) & (
+                    c2.Close > (c1.Open + ((c1.Open - c1.Close) * 0.16)))):
+                if ((c3.Green > 0) & (c3.bodyGreen >= 0.65) & (c3.Close > c2.High) & (c3.Open >= c1.Open)):
                     return True
     return False
 
@@ -286,7 +298,8 @@ def anyPattern(folder1, folderName, patternName):
              'Вложенные': [trendUpInnerFirst, trendUpInnerSecond, trendDownInnerSecond, trendDownInnerFirst],
              'Рикошет': [ricochet],
              'Пистолет': [halfCandleInner],
-             'Харами': [haramiUp, haramiDown]}
+             'Харами': [haramiUp, haramiDown],
+             'Усиление': [raiseUp, raiseDown]}
 
     for i in ticks:
         tick = i
@@ -312,7 +325,7 @@ def anyPattern(folder1, folderName, patternName):
                     df['signal'] = np.nan
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
                     addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
-# name = 'Харами'
-# patternName = 'Харами'
-# folder1 = '/home/linac/Рабочий стол/data/20210302_60d1d/up/'
-# anyPattern(folder1, 'test', patternName)
+name = 'Усиление'
+patternName = 'Усиление'
+folder1 = '/home/linac/Рабочий стол/data/test/up/'
+anyPattern(folder1, 'test', patternName)

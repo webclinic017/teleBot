@@ -15,7 +15,7 @@ key = 0
 tf = ''
 
 
-@bot.message_handler(commands=['Разворот', 'Вложенные', 'Рикошет', 'Все', 'Харами'], content_types=['text'])
+@bot.message_handler(commands=['Разворот', 'Вложенные', 'Рикошет', 'Все', 'Харами', 'Усиление'], content_types=['text'])
 def start_handler(message):
     global userMessage
     userMessage = message
