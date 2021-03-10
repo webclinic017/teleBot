@@ -20,7 +20,7 @@ startTurnaroundPattern - принимает на вход интервал(tf), 
 
 timeFrame = {'День': ['60d', '1d'], 'Час': ['10d', '60m'], '30': ['6d', '30m'], '15': ['4d', '15m'], '5': ['1d', '5m']}
 funcs = {'Разворот': patterns.anyPattern, 'Вложенные': patterns.anyPattern, 'Рикошет': patterns.anyPattern,
-         'Все': patterns.anyPattern, 'Харами': patterns.anyPattern, 'Усиление': patterns.anyPattern}
+         'Все': patterns.anyPattern, 'Харами': patterns.anyPattern, 'Усиление': patterns.anyPattern, 'Пинцет': patterns.anyPattern, 'Завеса': patterns.anyPattern}
 
 
 def startTurnaroundPattern(tf, patternName, key):

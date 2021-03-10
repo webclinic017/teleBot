@@ -17,125 +17,107 @@ folder = ''
 tick = ''
 
 
-def trendUpRed(candle0, candle1, candle2, candle3):  # восходящий тренд красный пин бар
+def trendUpRed(c0, c1, c2, c3):  # восходящий тренд красный пин бар
     if str(folder).__contains__('up'):
-        if (candle1.Green > 0) & (candle1.bodyGreen >= 0.65):
-            if (candle2.PatternRedHighShadow | candle2.PatternRedEqShadows) & (candle2.High > candle1.High) & (
-                    (candle2.Close >= (candle1.Close - ((candle1.Close - candle1.Open) * 0.3)))) & (
-                    candle2.Low > (((candle1.High - candle1.Low) / 2) + candle1.Low)) & (
-                    candle2.Open > candle1.Close):
-                if (candle3.Red > 0) & (candle3.Close <= candle1.Open) & (
-                        candle3.Open <= (((candle2.Open - candle2.Close) / 2) + candle2.Close)) & (
-                        candle3.High < candle2.High):
+        if (c1.bodyGreen >= 0.65):
+            if (c2.PatternRedHighShadow | c2.PatternRedEqShadows) & (c2.High > c1.High) & (
+                    (c2.Close >= (c1.Close - ((c1.Close - c1.Open) * 0.3)))) & (
+                    c2.Low > (((c1.High - c1.Low) / 2) + c1.Low)) & (c2.Open > c1.Close):
+                if (c3.Red > 0) & (c3.Close <= c1.Open) & (c3.Open <= (((c2.Open - c2.Close) / 2) + c2.Close)) & (
+                        c3.High < c2.High):
                     return True
     return False
 
 
-def trendUpGreen(candle0, candle1, candle2, candle3):  # восходящий тренд зеленый пин бар
+def trendUpGreen(c0, c1, c2, c3):  # восходящий тренд зеленый пин бар
     if str(folder).__contains__('up'):
-        if (candle1.Green > 0) & (candle1.bodyGreen >= 0.65):
-            if (candle2.PatternGreenHighShadow | candle2.PatternGreenEqShadows) & (candle2.High > candle1.High) & (
-                    candle2.Open >= (candle1.Close - ((candle1.Close - candle1.Open) * 0.3))) & (
-                    candle2.Close > candle1.Close):
-                if (candle3.Red > 0) & (candle3.Open <= (((candle2.Close - candle2.Open) / 2) + candle2.Open)) & (
-                        candle3.Close <= candle1.Open) & (candle3.High < candle2.High):
+        if (c1.bodyGreen >= 0.65):
+            if (c2.PatternGreenHighShadow | c2.PatternGreenEqShadows) & (c2.High > c1.High) & (
+                    c2.Open >= (c1.Close - ((c1.Close - c1.Open) * 0.3))) & (c2.Close > c1.Close):
+                if (c3.Red > 0) & (c3.Open <= (((c2.Close - c2.Open) / 2) + c2.Open)) & (
+                        c3.Close <= c1.Open) & (c3.High < c2.High):
                     return True
     return False
 
 
-def trendDownRed(candle0, candle1, candle2, candle3):  # нисходящий тренд красный пин бар
+def trendDownRed(c0, c1, c2, c3):  # нисходящий тренд красный пин бар
     if str(folder).__contains__('down'):
-        if (candle1.Red > 0) & (candle1.bodyRed >= 0.65):
-            if (candle2.PatternRedBottomShadow | candle2.PatternRedEqShadows) & (candle2.Close <= candle1.Low) & (
-                    candle2.Low < candle1.Low) & (
-                    candle2.Open >= (candle1.Close - ((candle1.Open - candle1.Close) * 0.3))):
-                if (candle3.Green > 0) & (candle3.Close > candle2.High) & (
-                        candle3.Open >= (candle2.Close - ((candle2.High - candle2.Low) * 0.15))) & (
-                        candle3.Low > candle2.Low):
+        if (c1.bodyRed >= 0.65):
+            if (c2.PatternRedBottomShadow | c2.PatternRedEqShadows) & (c2.Close <= c1.Low) & (
+                    c2.Low < c1.Low) & (c2.Open >= (c1.Close - ((c1.Open - c1.Close) * 0.3))):
+                if (c3.Green > 0) & (c3.Close > c2.High) & (
+                        c3.Open >= (c2.Close - ((c2.High - c2.Low) * 0.15))) & (c3.Low > c2.Low):
                     return True
     return False
 
 
-def trendDownGreen(candle0, candle1, candle2, candle3):  # нисходящий тренд зеленый пин бар
+def trendDownGreen(c0, c1, c2, c3):  # нисходящий тренд зеленый пин бар
     if str(folder).__contains__('down'):
-        if (candle1.Red > 0) & (candle1.bodyRed >= 0.65):
-            if (candle2.PatternGreenBottomShadow | candle2.PatternGreenEqShadows) & (
-                    candle2.High <= (((candle1.High - candle1.Low) * 0.66) + candle1.Low)) & (
-                    candle2.Close <= ((candle1.Open - candle1.Close) * 0.30) + candle1.Close) & (
-                    candle2.Open <= candle1.Low) & (candle2.Low < candle1.Low):
-                if (candle3.Green > 0) & (candle3.Close > candle2.High) & (
-                        candle3.Open >= (candle2.Open - ((candle2.High - candle2.Low) * 0.15))) & (
-                        candle3.Low > candle2.Low):
+        if (c1.bodyRed >= 0.65):
+            if (c2.PatternGreenBottomShadow | c2.PatternGreenEqShadows) & (
+                    c2.High <= (((c1.High - c1.Low) * 0.66) + c1.Low)) & (
+                    c2.Close <= ((c1.Open - c1.Close) * 0.30) + c1.Close) & (c2.Open <= c1.Low) & (c2.Low < c1.Low):
+                if (c3.Green > 0) & (c3.Close > c2.High) & (
+                        c3.Open >= (c2.Open - ((c2.High - c2.Low) * 0.15))) & (c3.Low > c2.Low):
                     return True
     return False
 
 
-def trendUpInnerFirst(candle0, candle1, candle2, candle3):  # trendFirst innerFirst(green)
+def trendUpInnerFirst(c0, c1, c2, c3):  # trendFirst innerFirst(green)
     if str(folder).__contains__('up'):
-        if (candle1.Green > 0) & (candle1.bodyGreen >= 0.75):
-            if ((candle2.Red > 0) & (candle2.bodyRed >= 0.55)) & (
-                    (candle2.Close >= candle1.Open) & (candle2.Open <= candle1.Close) & (candle2.High <= candle1.High)):
-                if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+        if (c1.bodyGreen >= 0.75):
+            if ((c2.bodyRed >= 0.55) & (c2.Close >= c1.Open) & (c2.Open <= c1.Close) & (c2.High <= c1.High)):
+                if ((c3.Green > 0) & (c3.Close < (((c2.Open - c2.Close) * 0.53) + c2.Close))):
                     return True
-                if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                if ((c3.Red > 0) & (c3.Open <= (((c2.Open - c2.Close) * 0.53) + c2.Close))):
                     return True
     return False
 
 
-def trendUpInnerSecond(candle0, candle1, candle2, candle3):  # trendUp innerSecond(red)
+def trendUpInnerSecond(c0, c1, c2, c3):  # trendUp innerSecond(red)
     if str(folder).__contains__('up'):
-        if ((candle1.Green > 0) & (candle1.bodyGreen >= 0.75)) & (
-                (candle1.Close <= candle2.Open) & (candle1.Open >= candle2.Close)):
-            if (candle2.Red > 0) & (candle2.bodyRed >= 0.75):
-                if ((candle3.Green > 0) & (candle3.Close < (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+        if ((c1.bodyGreen >= 0.75) & (c1.Close <= c2.Open) & (c1.Open >= c2.Close)):
+            if (c2.bodyRed >= 0.75):
+                if ((c3.Green > 0) & (c3.Close < (((c2.Open - c2.Close) * 0.53) + c2.Close))):
                     return True
-                if ((candle3.Red > 0) & (candle3.Open <= (((candle2.Open - candle2.Close) * 0.53) + candle2.Close))):
+                if ((c3.Red > 0) & (c3.Open <= (((c2.Open - c2.Close) * 0.53) + c2.Close))):
                     return True
     return False
 
 
-def trendDownInnerSecond(candle0, candle1, candle2, candle3):  # trendDown innerSecond(green)
+def trendDownInnerSecond(c0, c1, c2, c3):  # trendDown innerSecond(green)
     if str(folder).__contains__('down'):
-        if ((candle1.Red > 0) & (candle1.bodyRed >= 0.75)):
-            if ((candle2.Green > 0) & (candle2.bodyGreen >= 0.55) & (candle2.Open >= candle1.Close) & (
-                    candle2.Low >= candle1.Low) & (
-                    candle2.Close > (((candle1.Open - candle1.Close) / 2) + candle1.Close)) & (
-                    candle2.Close <= candle1.Open)):
-                if ((candle3.Green > 0) & (candle3.Close > candle2.Close) & (
-                        candle3.Low >= (((candle2.Close - candle2.Open) * 0.49) + candle2.Open))):
+        if (c1.bodyRed >= 0.75):
+            if ((c2.bodyGreen >= 0.55) & (c2.Open >= c1.Close) & (c2.Low >= c1.Low) & (
+                    c2.Close > (((c1.Open - c1.Close) / 2) + c1.Close)) & (c2.Close <= c1.Open)):
+                if ((c3.Green > 0) & (c3.Close > c2.Close) & (c3.Low >= (((c2.Close - c2.Open) * 0.49) + c2.Open))):
                     return True
     return False
 
 
-def trendDownInnerFirst(candle0, candle1, candle2, candle3):  # trendDown innerFirst(red)
+def trendDownInnerFirst(c0, c1, c2, c3):  # trendDown innerFirst(red)
     if str(folder).__contains__('down'):
-        if ((candle1.Red > 0) & (candle1.bodyRed >= 0.75)):
-            if ((candle2.Green > 0) & (candle2.bodyGreen >= 0.75) & (candle2.Close >= candle1.Open) & (
-                    candle2.Open <= candle1.Close) & (candle2.Low <= candle1.Low) & (candle2.High >= candle1.High)):
-                if ((candle3.Green > 0) & (candle3.Close > candle2.Close) & (
-                        candle3.Low >= (((candle2.Close - candle2.Open) * 0.49) + candle2.Open))):
+        if (c1.bodyRed >= 0.75):
+            if ((c2.bodyGreen >= 0.75) & (c2.Close >= c1.Open) & (c2.Open <= c1.Close) & (c2.Low <= c1.Low) & (
+                    c2.High >= c1.High)):
+                if ((c3.Green > 0) & (c3.Close > c2.Close) & (c3.Low >= (((c2.Close - c2.Open) * 0.49) + c2.Open))):
                     return True
     return False
 
 
-def ricochet(candle0, candle1, candle2, candle3):
+def ricochet(c0, c1, c2, c3):
     global folder
     if str(folder).__contains__('up'):
-        if ((candle0.Green > 0) & (candle0.bodyGreen >= 0.55)):
-            print(1,tick)
-            if ((candle1.Green > 0) & (candle1.bodyGreen >= 0.47) & (candle1.Open >= candle0.Open)):
-                print(2,tick)
-                if ((candle2.Green > 0) & (candle2.bodyGreen >= 0.5) & (candle2.Open >= candle1.Open)) | (
-                        (candle2.Red > 0) & (candle2.bodyRed >= 0.5) & (candle2.Close >= candle1.Open)):
-                    print(3,tick)
-                    if ((candle3.Red > 0) & (candle3.bodyRed >= 0.5) & (candle3.Close <= candle1.Open)):
+        if (c0.bodyGreen >= 0.55):
+            if ((c1.bodyGreen >= 0.47) & (c1.Open >= c0.Open)):
+                if ((c2.bodyGreen >= 0.5) & (c2.Open >= c1.Open)) | ((c2.bodyRed >= 0.5) & (c2.Close >= c1.Open)):
+                    if ((c3.bodyRed >= 0.5) & (c3.Close <= c1.Open)):
                         return True
     if str(folder).__contains__('down'):
-        if ((candle0.Red > 0) & (candle0.bodyRed >= 0.55)):
-            if ((candle1.Red > 0) & (candle1.bodyRed >= 0.47) & (candle1.Low < candle0.Low)):
-                if ((candle2.Red > 0) & (candle2.bodyRed >= 0.5) & (candle2.Low < candle1.Low)) | (
-                        (candle2.Green > 0) & (candle2.bodyGreen >= 0.5) & (candle2.Low < candle1.Low)):
-                    if ((candle3.Green > 0) & (candle3.bodyGreen >= 0.5) & (candle3.Close >= candle1.Open)):
+        if (c0.bodyRed >= 0.55):
+            if ((c1.bodyRed >= 0.47) & (c1.Low < c0.Low)):
+                if ((c2.bodyRed >= 0.5) & (c2.Low < c1.Low)) | ((c2.bodyGreen >= 0.5) & (c2.Low < c1.Low)):
+                    if ((c3.bodyGreen >= 0.5) & (c3.Close >= c1.Open)):
                         return True
     return False
 
@@ -188,20 +170,59 @@ def haramiDown(c0, c1, c2, c3):
 
 def raiseUp(c0, c1, c2, c3):
     if str(folder).__contains__('up'):  # trend up
-        if ((c1.Green > 0) & (c1.bodyGreen >= 0.6) & (c1.highShadowGreen >= c1.bottomShadowGreen)):
-            if ((c2.Red > 0) & (c2.bodyRed >= 0.51) & (
-                    c2.Open < (c1.Open + ((c1.Close - c1.Open) * 0.16))) & (c2.Close < c1.Low)):
-                if ((c3.Red > 0) & (c3.bodyRed >= 0.65) & (c3.Close < c2.Low) & (c3.Open <= c1.Open)):
+        if ((c1.bodyGreen >= 0.6) & (c1.highShadowGreen >= c1.bottomShadowGreen)):
+            if ((c2.bodyRed >= 0.51) & (c2.Open < (c1.Open + ((c1.Close - c1.Open) * 0.16))) & (c2.Close < c1.Low)):
+                if ((c3.bodyRed >= 0.65) & (c3.Close < c2.Low) & (c3.Open <= c1.Open)):
                     return True
     return False
 
 
 def raiseDown(c0, c1, c2, c3):
     if str(folder).__contains__('down'):  # trend down
-        if ((c1.Red > 0) & (c1.bodyRed >= 0.6) & (c1.bottomShadowRed >= c1.highShadowRed)):
-            if ((c2.Green > 0) & (c2.bodyGreen >= 0.51) & (c2.Open > (c1.Close - ((c1.Open - c1.Close) * 0.16))) & (
-                    c2.Close > c1.High)):
-                if ((c3.Green > 0) & (c3.bodyGreen >= 0.65) & (c3.Close > c2.High) & (c3.Open >= c1.Open)):
+        if ((c1.bodyRed >= 0.6) & (c1.bottomShadowRed >= c1.highShadowRed)):
+            if ((c2.bodyGreen >= 0.51) & (c2.Open > (c1.Close - ((c1.Open - c1.Close) * 0.16))) & (c2.Close > c1.High)):
+                if ((c3.bodyGreen >= 0.65) & (c3.Close > c2.High) & (c3.Open >= c1.Open)):
+                    return True
+    return False
+
+
+def pincetUp(c0, c1, c2, c3):
+    if str(folder).__contains__('up'):  # trend up
+        if (c1.bodyGreen >= 0.6):
+            if (c2.bodyRed >= 0.60) & (np.isclose(c1.High, c2.High, atol=0.007)):
+                if ((c3.Red > 0) & (c3.Close <= c2.Close)):
+                    return True
+    return False
+
+
+def pincetDown(c0, c1, c2, c3):
+    if str(folder).__contains__('down'):  # trend down
+        if (c1.bodyRed >= 0.6):
+            if (c2.bodyGreen >= 0.60) & (np.isclose(c1.High, c2.High, atol=0.007)):
+                if ((c3.Green > 0) & (c3.Close >= c2.Close)):
+                    return True
+    return False
+
+
+def zavesaUp(c0, c1, c2, c3):
+    if str(folder).__contains__('up'):
+        if (c1.bodyGreen >= 0.55):
+            if ((c2.bodyRed >= 0.55) & (c2.Open > c1.Close) & (
+                    c2.Close < (c1.Close - ((c1.Close - c1.Open) * 0.15))) & (
+                    c2.Close > (c1.Open + ((c1.Close - c1.Open) * 0.15)))):
+                if ((c1.bodyRed >= 0.55) & (c3.Open < c2.Open) & (c3.Close <= c1.Open + ((c1.Close - c1.Open) * 0.15))):
+                    return True
+    return False
+
+
+def zavesaDown(c0, c1, c2, c3):
+    if str(folder).__contains__('down'):
+        if (c1.bodyRed >= 0.55):
+            if ((c2.bodyGreen >= 0.55) & (c2.Open < c1.Close) & (
+                    c2.Close > (c1.Close + ((c1.Close - c1.Open) * 0.15))) & (
+                    c2.Close < (c1.Open - ((c1.Close - c1.Open) * 0.15)))):
+                if ((c1.bodyGreen >= 0.55) & (c3.Open > c2.Open) & (
+                        c3.Close <= c1.Open - ((c1.Open - c1.Close) * 0.15))):
                     return True
     return False
 
@@ -292,7 +313,9 @@ def anyPattern(folder1, folderName, patternName):
              'Рикошет': [ricochet],
              'Пистолет': [halfCandleInner],
              'Харами': [haramiUp, haramiDown],
-             'Усиление': [raiseUp, raiseDown]}
+             'Усиление': [raiseUp, raiseDown],
+             'Пинцет': [pincetUp, pincetDown],
+             'Завеса': [zavesaUp, zavesaDown]}
 
     for i in ticks:
         tick = i
@@ -320,7 +343,7 @@ def anyPattern(folder1, folderName, patternName):
                     addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
 
-#name = 'Рикошет'
-#patternName = 'Рикошет'
-#folder1 = '/home/linac/Рабочий стол/data/test/up/'
+#name = 'Завеса'
+#patternName = 'Завеса'
+#folder1 = '/home/linac/Рабочий стол/data/20210310_1d5m/'
 #anyPattern(folder1, 'test', patternName)
