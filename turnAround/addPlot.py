@@ -4,10 +4,24 @@ import os
 import talib
 import mplfinance as mpf
 import numpy as np
+import datetime
 
 
 def mplot(df, signal, ticker, folder, folderName, patternName):
-    df.index = pd.to_datetime(df.Date)  # выставляем столбик с датой как индекс
+    #print(type(df.index))
+    #df.index = pd.to_datetime(df.Date)  # выставляем столбик с датой как индекс
+    #df.set_index('Date', inplace=True)
+    #print(type(df.index))
+    df.index = pd.DatetimeIndex(df.index)
+    #df.index = df.index.strtime("%Y-%m-%d %H:%M:%S")
+
+    #df.Date = pd.to_datetime(df.Date)
+    #df.index = datetime.datetime(df.Date)  # выставляем столбик с датой как индекс
+# 2021-03-10 09:30:00-05:00
+#print("%Y-%m-%d %H:%M:%S")
+    #print(df.head(),ticker)
+    #print(type(df.index))
+    #print(type(df.Date))
     apds = [mpf.make_addplot(signal, type='scatter', color='r', markersize=70, marker='v')]
 
     # объединияем все столбцы в один и ищем наиболее частые совпадения

@@ -108,16 +108,16 @@ def trendDownInnerFirst(c0, c1, c2, c3):  # trendDown innerFirst(red)
 def ricochet(c0, c1, c2, c3):
     global folder
     if str(folder).__contains__('up'):
-        if (c0.bodyGreen >= 0.55):
-            if ((c1.bodyGreen >= 0.47) & (c1.Open >= c0.Open)):
-                if ((c2.bodyGreen >= 0.5) & (c2.Open >= c1.Open)) | ((c2.bodyRed >= 0.5) & (c2.Close >= c1.Open)):
-                    if ((c3.bodyRed >= 0.5) & (c3.Close <= c1.Open)):
+        if (c0.Green > 0):
+            if ((c1.Green > 0) & (c1.Close > c0.Close) & (c1.Open >= (c0.Open + ((c0.Close - c0.Open) * 0.5)))):
+                if ((c2.Green > 0) & (c2.Close > c1.Close) & (c2.Open >= (c1.Open + ((c1.Close - c1.Open) * 0.5)))):
+                    if ((c3.bodyRed >= 0.6) & (c3.Open > c2.Low) & (c3.Close <= c1.Open) & (c3.High < c2.Low)):
                         return True
     if str(folder).__contains__('down'):
-        if (c0.bodyRed >= 0.55):
-            if ((c1.bodyRed >= 0.47) & (c1.Low < c0.Low)):
-                if ((c2.bodyRed >= 0.5) & (c2.Low < c1.Low)) | ((c2.bodyGreen >= 0.5) & (c2.Low < c1.Low)):
-                    if ((c3.bodyGreen >= 0.5) & (c3.Close >= c1.Open)):
+        if (c0.Red > 0):
+            if ((c1.Red > 0) & (c1.Close < c0.Close) & (c1.Open <= (c0.Close + ((c0.Open - c0.Close) * 0.5)))):
+                if ((c2.Red > 0) & (c2.Close < c1.Close) & (c2.Open <= (c1.Close + ((c1.Open - c1.Close) * 0.5)))):
+                    if ((c3.bodyGreen >= 0.6) & (c3.Low > c2.High) & (c3.Close >= c1.Open)):
                         return True
     return False
 
@@ -188,18 +188,49 @@ def raiseDown(c0, c1, c2, c3):
 
 def pincetUp(c0, c1, c2, c3):
     if str(folder).__contains__('up'):  # trend up
-        if (c1.bodyGreen >= 0.6):
-            if (c2.bodyRed >= 0.60) & (np.isclose(c1.High, c2.High, atol=0.007)):
-                if ((c3.Red > 0) & (c3.Close <= c2.Close)):
+        try:
+            c9 = candles.Candle(df[-9:-8])
+            c8 = candles.Candle(df[-8:-7])
+            c7 = candles.Candle(df[-7:-6])
+            c6 = candles.Candle(df[-6:-5])
+            c5 = candles.Candle(df[-5:-4])
+        except ZeroDivisionError:
+            return False
+            # допускаем две свечи любого цвета между 1 и 2 с хай ниже 1
+        c1Yes = (c5.High < c1.High) & (c6.High < c1.High) & (c7.High < c1.High) & (c8.High < c1.High) & (
+                        c0.High < c1.High) & (c1.bodyGreen >= 0.15)
+        c0Yes = (c5.High < c0.High) & (c6.High < c0.High) & (c7.High < c0.High) & (c8.High < c0.High) & (
+                        c1.High < c0.High) & (c0.bodyRed >= 0.15)
+        c5Yes = (c1.High < c5.High) & (c6.High < c5.High) & (c7.High < c5.High) & (c8.High < c5.High) & (
+                        c0.High < c5.High) & (c5.bodyRed >= 0.15) & (c9.High < c5.High)
+
+        if (c1Yes | c0Yes | c5Yes):
+            if (c2.bodyRed >= 0.15) & (np.isclose(c1.High, c2.High, atol=0.007)):  # разница не более 7% между точками
+                if ((c3.bodyRed >= 0.15) & (c3.Close <= c2.Close) & (c3.Open <= c2.Open)):
                     return True
     return False
 
 
 def pincetDown(c0, c1, c2, c3):
     if str(folder).__contains__('down'):  # trend down
-        if (c1.bodyRed >= 0.6):
-            if (c2.bodyGreen >= 0.60) & (np.isclose(c1.High, c2.High, atol=0.007)):
-                if ((c3.Green > 0) & (c3.Close >= c2.Close)):
+        try:
+            c9 = candles.Candle(df[-9:-8])
+            c8 = candles.Candle(df[-8:-7])
+            c7 = candles.Candle(df[-7:-6])
+            c6 = candles.Candle(df[-6:-5])
+            c5 = candles.Candle(df[-5:-4])
+        except ZeroDivisionError:
+            return False
+        # допускаем две свечи любого цвета между 1 и 2 с лоу выше 1
+        c1Yes = (c5.Low > c1.Low) & (c6.Low > c1.Low) & (c7.Low > c1.Low) & (c8.Low > c1.Low) & (c0.Low > c1.Low) & (
+                c1.bodyRed >= 0.15)
+        c0Yes = (c5.Low > c0.Low) & (c6.Low > c0.Low) & (c7.Low > c0.Low) & (c8.Low > c0.Low) & (c1.Low > c0.Low) & (
+                c0.bodyRed >= 0.15)
+        c5Yes = (c1.Low > c5.Low) & (c6.Low > c5.Low) & (c7.Low > c5.Low) & (c8.Low > c5.Low) & (c0.Low > c5.Low) & (
+                c5.bodyRed >= 0.15) & (c9.Low > c5.Low)
+        if (c1Yes | c0Yes | c5Yes):
+            if (c2.bodyGreen >= 0.15) & (np.isclose(c1.Low, c2.Low, atol=0.007)):  # разница не более 7% между точками
+                if ((c3.bodyGreen >= 0.15) & (c3.Close >= c2.Close) & (c3.Open >= c2.Open)):
                     return True
     return False
 
@@ -207,10 +238,10 @@ def pincetDown(c0, c1, c2, c3):
 def zavesaUp(c0, c1, c2, c3):
     if str(folder).__contains__('up'):
         if (c1.bodyGreen >= 0.55):
-            if ((c2.bodyRed >= 0.55) & (c2.Open > c1.Close) & (
+            if ((c2.bodyRed >= 0.4) & (c2.Open > c1.Close) & (
                     c2.Close < (c1.Close - ((c1.Close - c1.Open) * 0.15))) & (
                     c2.Close > (c1.Open + ((c1.Close - c1.Open) * 0.15)))):
-                if ((c1.bodyRed >= 0.55) & (c3.Open < c2.Open) & (c3.Close <= c1.Open + ((c1.Close - c1.Open) * 0.15))):
+                if ((c3.bodyRed >= 0.55) & (c3.Open < c2.Open) & (c3.Close <= c1.Open + ((c1.Close - c1.Open) * 0.15))):
                     return True
     return False
 
@@ -218,10 +249,10 @@ def zavesaUp(c0, c1, c2, c3):
 def zavesaDown(c0, c1, c2, c3):
     if str(folder).__contains__('down'):
         if (c1.bodyRed >= 0.55):
-            if ((c2.bodyGreen >= 0.55) & (c2.Open < c1.Close) & (
+            if ((c2.bodyGreen >= 0.4) & (c2.Open < c1.Close) & (
                     c2.Close > (c1.Close + ((c1.Close - c1.Open) * 0.15))) & (
                     c2.Close < (c1.Open - ((c1.Close - c1.Open) * 0.15)))):
-                if ((c1.bodyGreen >= 0.55) & (c3.Open > c2.Open) & (
+                if ((c3.bodyGreen >= 0.55) & (c3.Open > c2.Open) & (
                         c3.Close <= c1.Open - ((c1.Open - c1.Close) * 0.15))):
                     return True
     return False
@@ -342,8 +373,7 @@ def anyPattern(folder1, folderName, patternName):
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
                     addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
-
-#name = 'Завеса'
-#patternName = 'Завеса'
-#folder1 = '/home/linac/Рабочий стол/data/20210310_1d5m/'
+#name = 'Все'
+#patternName = 'Все'
+#folder1 = '/home/linac/Рабочий стол/data/20210317_10d60m/up/'
 #anyPattern(folder1, 'test', patternName)
