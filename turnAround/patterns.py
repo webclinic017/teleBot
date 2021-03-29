@@ -4,6 +4,9 @@ import numpy as np
 import os
 import turnAround.addPlot as addPlot
 import turnAround.candles as candles
+import turnAround.stat as stat
+from datetime import date
+
 
 pd.options.mode.chained_assignment = None  # отключение уведомлений
 
@@ -198,11 +201,11 @@ def pincetUp(c0, c1, c2, c3):
             return False
             # допускаем две свечи любого цвета между 1 и 2 с хай ниже 1
         c1Yes = (c5.High < c1.High) & (c6.High < c1.High) & (c7.High < c1.High) & (c8.High < c1.High) & (
-                        c0.High < c1.High) & (c1.bodyGreen >= 0.15)
+                c0.High < c1.High) & (c1.bodyGreen >= 0.15)
         c0Yes = (c5.High < c0.High) & (c6.High < c0.High) & (c7.High < c0.High) & (c8.High < c0.High) & (
-                        c1.High < c0.High) & (c0.bodyRed >= 0.15)
+                c1.High < c0.High) & (c0.bodyRed >= 0.15)
         c5Yes = (c1.High < c5.High) & (c6.High < c5.High) & (c7.High < c5.High) & (c8.High < c5.High) & (
-                        c0.High < c5.High) & (c5.bodyRed >= 0.15) & (c9.High < c5.High)
+                c0.High < c5.High) & (c5.bodyRed >= 0.15) & (c9.High < c5.High)
 
         if (c1Yes | c0Yes | c5Yes):
             if (c2.bodyRed >= 0.15) & (np.isclose(c1.High, c2.High, atol=0.007)):  # разница не более 7% между точками
@@ -253,7 +256,7 @@ def zavesaDown(c0, c1, c2, c3):
                     c2.Close > (c1.Close + ((c1.Close - c1.Open) * 0.15))) & (
                     c2.Close < (c1.Open - ((c1.Close - c1.Open) * 0.15)))):
                 if ((c3.bodyGreen >= 0.55) & (c3.Open > c2.Open) & (
-                        c3.Close <= c1.Open - ((c1.Open - c1.Close) * 0.15))):
+                        c3.Close <= (c1.Open - ((c1.Open - c1.Close) * 0.15)))):
                     return True
     return False
 
@@ -310,7 +313,11 @@ def highVolumePattern(candle0, candle1, candle2, candle3):
     # следующие 3 свечи после Х имеют снижение в объеме относительно предыдущей свечи
     v = []
     global df
-    a = int(df.loc[:].Volume.mean() * 4)
+    a = 0
+    try:
+        a = int(df.loc[:].Volume.mean() * 4)
+    except ValueError:
+        pass
     dfV = df.tail(10)  # берем строки с конца
     dfV.insert(0, 'Ind', range(0, len(dfV)))  # добавляем колнонку с цифровым индексом
     v = dfV.Ind[dfV.Volume > a].tolist()
@@ -371,9 +378,13 @@ def anyPattern(folder1, folderName, patternName):
                     print(str(i)[:-4])
                     df['signal'] = np.nan
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
+                    df = df.round(2) # округление
+                    stat.addStat([str(i)[:-4], patternName, folder[-4:].replace('/',''), date.today(), float(df.Close[-1:]),
+                         float(df.Close[-1:]) * 1.05, float(df.Close[-1:]) * 0.95, float(df.Close[-1:])])
+                    stat.checkStat()
                     addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
-#name = 'Все'
-#patternName = 'Все'
-#folder1 = '/home/linac/Рабочий стол/data/20210317_10d60m/up/'
+#name = 'Вложенные'
+#patternName = 'Вложенные'
+#folder1 = '/home/linac/Рабочий стол/data/20210327_1d5m/up/'
 #anyPattern(folder1, 'test', patternName)

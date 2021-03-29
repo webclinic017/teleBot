@@ -27,7 +27,7 @@ def mplot(df, signal, ticker, folder, folderName, patternName):
     # объединияем все столбцы в один и ищем наиболее частые совпадения
     columnlist = ['Open', 'Close', 'High', 'Low']
     df2 = pd.concat(map(df.get, columnlist)).reset_index(drop=True)
-    df2 = df2.round(2)  # округление
+    #df2 = df2.round(2)  # округление
     lines = []
     count = 0
     for i in list(df2.value_counts()):
