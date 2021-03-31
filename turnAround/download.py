@@ -3,6 +3,7 @@ import os
 import yfinance as yf
 import pandas as pd
 from datetime import datetime
+import time
 
 '''
 Метод download получает на вход период и интервал, по которым скачивает данные. Данные параметры используются также
@@ -39,6 +40,7 @@ def download(period1, interval1, key):
             ticker_list.append(i)
     str0.close()
     for i in range(0, int(len(ticker_list) / 100)):
+        time.sleep(1)
         data = yf.download(
             tickers=ticker_list[i * 100:(i * 100) + 100],
             period=str(period1),  # 60d

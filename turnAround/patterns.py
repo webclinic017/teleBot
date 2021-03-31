@@ -380,7 +380,7 @@ def anyPattern(folder1, folderName, patternName):
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
                     df = df.round(2) # округление
                     stat.addStat([str(i)[:-4], patternName, folder[-4:].replace('/',''), date.today(), float(df.Close[-1:]),
-                         float(df.Close[-1:]) * 1.05, float(df.Close[-1:]) * 0.95, float(df.Close[-1:])])
+                         float(df.Close[-1:]) * 1.03, float(df.Close[-1:]) * 0.97, float(df.Close[-1:])])
                     stat.checkStat()
                     addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
