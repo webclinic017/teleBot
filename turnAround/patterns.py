@@ -5,6 +5,7 @@ import os
 import turnAround.addPlot as addPlot
 import turnAround.candles as candles
 import turnAround.stat as stat
+import turnAround.points2 as points
 from datetime import date
 
 
@@ -379,12 +380,15 @@ def anyPattern(folder1, folderName, patternName):
                     df['signal'] = np.nan
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
                     df = df.round(2) # округление
-                    stat.addStat([str(i)[:-4], patternName, folder[-4:].replace('/',''), date.today(), float(df.Close[-1:]),
+                    stat.addStat([str(i)[:-4], patternName, folderName, folder[-4:].replace('/',''), date.today(), float(df.Close[-1:]),
                          float(df.Close[-1:]) * 1.03, float(df.Close[-1:]) * 0.97, float(df.Close[-1:])])
                     stat.checkStat()
-                    addPlot.mplot(df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
-#name = 'Вложенные'
-#patternName = 'Вложенные'
-#folder1 = '/home/linac/Рабочий стол/data/20210327_1d5m/up/'
+                    #addPlot.mplot(points.start1(df),df, df.signal, str(i)[:-4], folder, folderName, patternName)
+                    addPlot.mplot(points.start1(df),df, df.signal, str(i)[:-4], folder, folderName, patternName)
+
+
+#name = 'Все'
+#patternName = 'Все'
+#folder1 = '/home/linac/Рабочий стол/data/20210403_4d15m/down/'
 #anyPattern(folder1, 'test', patternName)

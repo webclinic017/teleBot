@@ -2,9 +2,12 @@ import csv
 import pandas as pd
 import os
 from datetime import date
+import numpy as np
 
 folder = '/home/linac/Рабочий стол/data/stat/stat.csv'
-def addStat (list):
+
+
+def addStat(list):
     file = open(folder, 'a')
     with file:
         writer = csv.writer(file)
@@ -12,29 +15,35 @@ def addStat (list):
     file.close()
 
 
-def checkStat ():
+def checkStat():
     df = pd.read_csv(folder)
     for index, row in df.iterrows():
         try:
             df.CurrentPoint[index] = updateCurrentPoint(row.Ticker)
-        except: pass
-        if (row.Trend == 'own') & (float(row.CurrentPoint) >= float(row.TargetPoint)) & (row.Status == ""):
+        except:
+            pass
+        # print(np.isnan(row.Status))
+        if (row.Trend == 'own') & (float(row.CurrentPoint) >= float(row.TargetPoint)) & (
+                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Profit'
             df.FinishDate[index] = date.today()
-        if (row.Trend == 'own') & (float(row.CurrentPoint) <= float(row.CancelPoint)) & (row.Status == ""):
+        if (row.Trend == 'own') & (float(row.CurrentPoint) <= float(row.CancelPoint)) & (
+                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Cancel'
             df.FinishDate[index] = date.today()
-        if (row.Trend == 'up') & (float(row.CurrentPoint) <= float(row.CancelPoint)) & (row.Status == ""):
+        if (row.Trend == 'up') & (float(row.CurrentPoint) <= float(row.CancelPoint)) & (
+                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Profit'
             df.FinishDate[index] = date.today()
-        if (row.Trend == 'up') & (float(row.CurrentPoint) >= float(row.TargetPoint)) & (row.Status == ""):
+        if (row.Trend == 'up') & (float(row.CurrentPoint) >= float(row.TargetPoint)) & (
+                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Cancel'
             df.FinishDate[index] = date.today()
-    df.to_csv(folder, header = True, index=False) # запись изменений в файл
+    df.to_csv(folder, header=True, index=False)  # запись изменений в файл
 
 
 def updateCurrentPoint(ticker):
     dir = '/home/linac/Рабочий стол/data/'
-    dir1 = max([os.path.join(dir,d) for d in os.listdir(dir)], key = os.path.getmtime) + '/' + ticker + '.csv'
+    dir1 = max([os.path.join(dir, d) for d in os.listdir(dir)], key=os.path.getmtime) + '/' + ticker + '.csv'
     df = pd.read_csv(dir1)
     return float(df.Close[-1:])

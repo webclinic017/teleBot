@@ -7,22 +7,15 @@ import numpy as np
 import datetime
 
 
-def mplot(df, signal, ticker, folder, folderName, patternName):
-    #print(type(df.index))
-    #df.index = pd.to_datetime(df.Date)  # выставляем столбик с датой как индекс
-    #df.set_index('Date', inplace=True)
-    #print(type(df.index))
-    df.index = pd.DatetimeIndex(df.index)
-    #df.index = df.index.strtime("%Y-%m-%d %H:%M:%S")
+def mplot(points, df, signal, ticker, folder, folderName, patternName):
+    pointsMax = points[1]
+    pointsMin = points[0]
+    pointsAll = points[2]
+    df.index = pd.DatetimeIndex(df.Date)
 
-    #df.Date = pd.to_datetime(df.Date)
-    #df.index = datetime.datetime(df.Date)  # выставляем столбик с датой как индекс
-# 2021-03-10 09:30:00-05:00
-#print("%Y-%m-%d %H:%M:%S")
-    #print(df.head(),ticker)
-    #print(type(df.index))
-    #print(type(df.Date))
-    apds = [mpf.make_addplot(signal, type='scatter', color='r', markersize=70, marker='v')]
+    apds = [mpf.make_addplot(pointsMax, type='scatter', color='k', markersize=50, marker='.'),
+            mpf.make_addplot(pointsMin, type='scatter', color='k', markersize=50, marker='.'),
+            mpf.make_addplot(signal, type='scatter', color='r', markersize=70, marker='v')]
 
     # объединияем все столбцы в один и ищем наиболее частые совпадения
     columnlist = ['Open', 'Close', 'High', 'Low']
@@ -34,14 +27,10 @@ def mplot(df, signal, ticker, folder, folderName, patternName):
         if i >= 3:
             lines.append(df2.value_counts().keys()[count])
         count += 1
+
     fig, axes = mpf.plot(df, type='candle', style='yahoo', title=ticker, volume=True, mav=(8, 13, 21, 55),
-                         returnfig=True, addplot=apds, figscale=1.6,
+                         returnfig=True, addplot=apds, figscale=1.6, alines = pointsAll,
                          hlines=dict(hlines=lines, colors='b', linewidths=7, alpha=0.08))
-    # tdates = [(df.index[0], df.index[-1])]
-    # fig, axes = mpf.plot(df, type='candle', style='yahoo', title=ticker, volume=True, mav=(8, 13, 21, 55),
-    #                     returnfig=True, addplot=apds, figscale=1.6, tlines=[
-    #        dict(tlines=tdates, tline_use=['Open', 'Close', 'High', 'Low'], tline_method='least-squares', colors='r',
-    #             linewidths=(0.5))])
 
     axes[0].set_title(patternName + '       (' + folderName + ')' + "       buy = , stop = , take = ")
     axes[2].set_title('ema 8,13,21,55 ')
