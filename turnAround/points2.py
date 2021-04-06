@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
-import turnAround.points as points
+#import turnAround.points as points
 from scipy.signal import argrelextrema
 import datetime
 import mplfinance as mpf

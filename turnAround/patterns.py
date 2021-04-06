@@ -7,6 +7,7 @@ import turnAround.candles as candles
 import turnAround.stat as stat
 import turnAround.points2 as points
 from datetime import date
+import turnAround.wolfWaves as ww
 
 
 pd.options.mode.chained_assignment = None  # отключение уведомлений
@@ -279,7 +280,7 @@ def halfCandleInner(candle0, candle1, candle2, candle3):  # half
         if (candle0.Volume >= v) & (candle5.Volume <= midV) & (candle6.Volume <= midV) & (candle7.Volume <= midV) & (
                 candle8.Volume <= midV):
             if str(folder).__contains__('up'):
-                print('Up')
+                #print('Up')
                 pointX = candle0.Low + ((candle0.High - candle0.Low) * 0.6)
                 c1 = ((candle1.Red > 0) & (candle1.Open <= pointX)) | ((candle1.Green > 0) & (candle1.Close <= pointX))
                 c2 = ((candle2.Red > 0) & (candle2.Open <= pointX)) | ((candle2.Green > 0) & (candle2.Close <= pointX))
@@ -288,7 +289,7 @@ def halfCandleInner(candle0, candle1, candle2, candle3):  # half
                         candle3.Low >= candle0.Low):
                     return True
             if str(folder).__contains__('down'):
-                print('down')
+                #print('down')
                 pointX = candle0.High - ((candle0.High - candle0.Low) * 0.6)
                 c1H = ((candle1.Red > 0) & (candle1.Open <= candle0.High)) | (
                         (candle1.Green > 0) & (candle1.Close <= candle0.High))
@@ -339,6 +340,8 @@ def highVolumePattern(candle0, candle1, candle2, candle3):
                 return True
     return False
 
+def test(candle0, candle1, candle2, candle3):
+    return ww.findWaves(df)
 
 def anyPattern(folder1, folderName, patternName):
     global df
@@ -355,10 +358,12 @@ def anyPattern(folder1, folderName, patternName):
              'Усиление': [raiseUp, raiseDown],
              'Пинцет': [pincetUp, pincetDown],
              'Завеса': [zavesaUp, zavesaDown]}
+             #'test': [test]}
 
     for i in ticks:
         tick = i
         df = pd.read_csv(folder + '/' + i)
+
         if 'Date' not in df:  # на мелких тф колонка называется Datetime
             df.rename(columns={'Datetime': 'Date'}, inplace=True)
             df.rename(columns={'Unnamed: 0': 'Date'}, inplace=True)
@@ -384,7 +389,6 @@ def anyPattern(folder1, folderName, patternName):
                          float(df.Close[-1:]) * 1.03, float(df.Close[-1:]) * 0.97, float(df.Close[-1:])])
                     stat.checkStat()
 
-                    #addPlot.mplot(points.start1(df),df, df.signal, str(i)[:-4], folder, folderName, patternName)
                     addPlot.mplot(points.start1(df),df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
 
