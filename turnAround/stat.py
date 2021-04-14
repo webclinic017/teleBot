@@ -22,21 +22,20 @@ def checkStat():
             df.CurrentPoint[index] = updateCurrentPoint(row.Ticker)
         except:
             pass
-        # print(np.isnan(row.Status))
         if (row.Trend == 'own') & (float(row.CurrentPoint) >= float(row.TargetPoint)) & (
-                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
+                (str(row.Status) != 'Profit') & (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Profit'
             df.FinishDate[index] = date.today()
         if (row.Trend == 'own') & (float(row.CurrentPoint) <= float(row.CancelPoint)) & (
-                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
+                (str(row.Status) != 'Profit') & (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Cancel'
             df.FinishDate[index] = date.today()
         if (row.Trend == 'up') & (float(row.CurrentPoint) <= float(row.CancelPoint)) & (
-                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
+                (str(row.Status) != 'Profit') & (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Profit'
             df.FinishDate[index] = date.today()
         if (row.Trend == 'up') & (float(row.CurrentPoint) >= float(row.TargetPoint)) & (
-                (str(row.Status) != 'Profit') | (str(row.Status) != 'Cancel')):
+                (str(row.Status) != 'Profit') & (str(row.Status) != 'Cancel')):
             df.Status[index] = 'Cancel'
             df.FinishDate[index] = date.today()
     df.to_csv(folder, header=True, index=False)  # запись изменений в файл

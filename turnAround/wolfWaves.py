@@ -66,6 +66,7 @@ def findWaves(df):
     p2 = 0
     p3 = 0
     p4 = 0
+    p5 = 0
 
 
     for i, row2 in dfmm.iterrows():
@@ -74,20 +75,21 @@ def findWaves(df):
             p2 = ww.Point(dfmm[i + 1:i + 2])
             p3 = ww.Point(dfmm[i + 2:i + 3])
             p4 = ww.Point(dfmm[i+3:i+4])
+            p5 = ww.Point(dfmm[i + 4:i + 5])
         except: return False
         #print(p1.miniP,p2.maxiP,p3.miniP,p4.maxiP)
 
-        print(p1.miniP > p3.miniP, p1.miniP < p2.maxiP, p1.miniP < p4.maxiP,p4.maxiP < p2.maxiP, p4.maxiP > p3.miniP)
+        print(p1.miniP > p3.miniP, p1.miniP < p2.maxiP, p1.miniP < p4.maxiP,p4.maxiP < p2.maxiP, p4.maxiP > p3.miniP, p5.miniP < p3.miniP)
 
         if (p1.miniP > p3.miniP) & (p1.miniP < p2.maxiP) & (p1.miniP < p4.maxiP) & (
-            p4.maxiP < p2.maxiP) & (p4.maxiP > p3.miniP):
+            p4.maxiP < p2.maxiP) & (p4.maxiP > p3.miniP) & (p5.miniP < p3.miniP):
             return True
 
 
 
-name = 'test'
-patternName = 'test'
-folder1 = '/home/linac/Рабочий стол/data/20210406_60d1d'
-patterns.anyPattern(folder1, 'test', patternName)
+#name = 'test'
+#patternName = 'test'
+#folder1 = '/home/linac/Рабочий стол/data/20210406_60d1d'
+#patterns.anyPattern(folder1, 'test', patternName)
 
 #start1(pd.read_csv('/home/linac/Рабочий стол/data/test/SKX.csv'))
