@@ -9,7 +9,6 @@ import turnAround.points2 as points
 from datetime import date
 import turnAround.wolfWaves as ww
 
-
 pd.options.mode.chained_assignment = None  # отключение уведомлений
 
 
@@ -47,12 +46,22 @@ def trendUpGreen(c0, c1, c2, c3):  # восходящий тренд зелен�
 
 def trendDownRed(c0, c1, c2, c3):  # нисходящий тренд красный пин бар
     if str(folder).__contains__('down'):
-        if (c1.bodyRed >= 0.65):
-            if (c2.PatternRedBottomShadow | c2.PatternRedEqShadows) & (c2.Close <= c1.Low) & (
-                    c2.Low < c1.Low) & (c2.Open >= (c1.Close - ((c1.Open - c1.Close) * 0.3))):
-                if (c3.Green > 0) & (c3.Close > c2.High) & (
-                        c3.Open >= (c2.Close - ((c2.High - c2.Low) * 0.15))) & (c3.Low > c2.Low):
-                    return True
+        cond1 = (c1.bodyRed >= 0.65)
+        cond2 = (c2.PatternRedBottomShadow | c2.PatternRedEqShadows) & (c2.Close <= c1.Low) & (
+                c2.Low < c1.Low) & (c2.Open >= (c1.Close - ((c1.Open - c1.Close) * 0.30)))
+        cond3 = (c3.bodyGreen >= 0.65) & (c3.Close >= (c1.Close + ((c1.High - c1.Low) * 0.20))) & (
+                c3.Open > c2.Open) & (c3.bottomShadowGreen > c3.highShadowGreen)
+        if cond1 & cond2 & cond3:
+            return True
+        else:
+            cond1 = (c0.bodyRed >= 0.65)
+            cond2 = (c1.PatternRedBottomShadow | c1.PatternRedEqShadows) & (c1.Close <= c0.Low) & (
+                    c1.Low < c0.Low) & (c1.Open >= (c0.Close - ((c0.Open - c0.Close) * 0.30)))
+            cond3 = (c3.bodyGreen >= 0.65) & (c3.Close >= (c0.Close + ((c0.High - c0.Low) * 0.20))) & (
+                    c3.Open > c1.Open) & (c3.bottomShadowGreen > c3.highShadowGreen)
+            cond4 = (c2.bodyGreen <= 0.4) | (c2.bodyRed <= 0.4)
+            if cond1 & cond2 & cond3 & cond4:
+                return True
     return False
 
 
@@ -62,8 +71,8 @@ def trendDownGreen(c0, c1, c2, c3):  # нисходящий тренд зеле�
             if (c2.PatternGreenBottomShadow | c2.PatternGreenEqShadows) & (
                     c2.High <= (((c1.High - c1.Low) * 0.66) + c1.Low)) & (
                     c2.Close <= ((c1.Open - c1.Close) * 0.30) + c1.Close) & (c2.Open <= c1.Low) & (c2.Low < c1.Low):
-                if (c3.Green > 0) & (c3.Close > c2.High) & (
-                        c3.Open >= (c2.Open - ((c2.High - c2.Low) * 0.15))) & (c3.Low > c2.Low):
+                if (c3.bodyGreen >= 0.65) & (c3.bottomShadowGreen > c3.highShadowGreen) & (
+                        c3.Close >= (c1.Close - ((c1.High - c1.Low) * 0.20))) & (c3.Open > c2.Open):
                     return True
     return False
 
@@ -280,7 +289,7 @@ def halfCandleInner(candle0, candle1, candle2, candle3):  # half
         if (candle0.Volume >= v) & (candle5.Volume <= midV) & (candle6.Volume <= midV) & (candle7.Volume <= midV) & (
                 candle8.Volume <= midV):
             if str(folder).__contains__('up'):
-                #print('Up')
+                # print('Up')
                 pointX = candle0.Low + ((candle0.High - candle0.Low) * 0.6)
                 c1 = ((candle1.Red > 0) & (candle1.Open <= pointX)) | ((candle1.Green > 0) & (candle1.Close <= pointX))
                 c2 = ((candle2.Red > 0) & (candle2.Open <= pointX)) | ((candle2.Green > 0) & (candle2.Close <= pointX))
@@ -289,7 +298,7 @@ def halfCandleInner(candle0, candle1, candle2, candle3):  # half
                         candle3.Low >= candle0.Low):
                     return True
             if str(folder).__contains__('down'):
-                #print('down')
+                # print('down')
                 pointX = candle0.High - ((candle0.High - candle0.Low) * 0.6)
                 c1H = ((candle1.Red > 0) & (candle1.Open <= candle0.High)) | (
                         (candle1.Green > 0) & (candle1.Close <= candle0.High))
@@ -340,8 +349,10 @@ def highVolumePattern(candle0, candle1, candle2, candle3):
                 return True
     return False
 
+
 def test(candle0, candle1, candle2, candle3):
     return ww.findWaves(df)
+
 
 def anyPattern(folder1, folderName, patternName):
     global df
@@ -357,8 +368,8 @@ def anyPattern(folder1, folderName, patternName):
              'Харами': [haramiUp, haramiDown],
              'Усиление': [raiseUp, raiseDown],
              'Пинцет': [pincetUp, pincetDown],
-             'Завеса': [zavesaUp, zavesaDown]}
-             #'test': [test]}
+             'Завеса': [zavesaUp, zavesaDown],
+             'test': [test]}
 
     for i in ticks:
         tick = i
@@ -384,15 +395,15 @@ def anyPattern(folder1, folderName, patternName):
                     print(str(i)[:-4])
                     df['signal'] = np.nan
                     df.signal[-2:-1] = float(df.High[-2:-1]) * 1.01  # отметка свечи
-                    df = df.round(2) # округление
-                    stat.addStat([str(i)[:-4], patternName, folderName, folder[-4:].replace('/',''), date.today(), float(df.Close[-1:]),
-                         float(df.Close[-1:]) * 1.03, float(df.Close[-1:]) * 0.97, float(df.Close[-1:])])
+                    df = df.round(2)  # округление
+                    stat.addStat([str(i)[:-4], patternName, folderName, folder[-4:].replace('/', ''), date.today(),
+                                  float(df.Close[-1:]),
+                                  float(df.Close[-1:]) * 1.03, float(df.Close[-1:]) * 0.97, float(df.Close[-1:])])
                     stat.checkStat()
 
-                    addPlot.mplot(points.start1(df),df, df.signal, str(i)[:-4], folder, folderName, patternName)
+                    addPlot.mplot(points.start1(df), df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
-
-#name = 'Все'
-#patternName = 'Все'
-#folder1 = '/home/linac/Рабочий стол/data/20210403_4d15m/down/'
+#name = 'Разворот'
+#patternName = 'Разворот'
+#folder1 = '/home/linac/Рабочий стол/data/test/down/'
 #anyPattern(folder1, 'test', patternName)

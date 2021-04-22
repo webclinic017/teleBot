@@ -1,15 +1,17 @@
 import pandas as pd
 import numpy as np
 import re
+import os
 from scipy.signal import argrelextrema
 import datetime
 import mplfinance as mpf
 import turnAround.wolfWaves as ww
 import turnAround.patterns as patterns
+import turnAround.points2 as points2
 
 pd.options.mode.chained_assignment = None  # отключение уведомлений
 
-
+lines = []
 class Point():
     def __init__(self, df1):
         df = df1
@@ -19,6 +21,7 @@ class Point():
         self.miniP = float(df.Minimum)
         self.High = float(df.High)
         self.Low = float(df.Low)
+        self.date = df.Date.values[0]
 
 
 '''
@@ -45,9 +48,39 @@ class Point():
 Точка 5 всегда находится ниже точки 3.
 Точки 1-3-5 находятся на одной линии.
 '''
+def tickers(folder):
+    return list(filter(lambda x: x.endswith('.csv'), os.listdir(folder)))
+
+def mplot(df, ticker, folder, lines):
+    points = points2.start1(df)
+    pointsMax = points[1]
+    pointsMin = points[0]
+    df.index = pd.DatetimeIndex(df.Date)
+    apds = [mpf.make_addplot(pointsMax, type='scatter', color='k', markersize=50, marker='.'),
+            mpf.make_addplot(pointsMin, type='scatter', color='k', markersize=50, marker='.')]
+
+    fig, axes = mpf.plot(df, type='candle', style='yahoo', title=ticker, volume=True, mav=(8, 13, 21, 55),
+                         returnfig=True, addplot=apds, figscale=1.6, alines=lines)
+    axes[2].set_title('ema 8,13,21,55 ')
+    fig.savefig(folder + '/' + ticker + '.png')
+    fig.clear()
+
+
+def serching(folder, text, patternName):
+    global lines
+    ticks = tickers(folder)
+    for i in ticks:
+        df = pd.read_csv(folder + '/' + i)
+        if 'Date' not in df:  # на мелких тф колонка называется Datetime
+            df.rename(columns={'Datetime': 'Date'}, inplace=True)
+            df.rename(columns={'Unnamed: 0': 'Date'}, inplace=True)
+
+        if findWaves(df):
+                #print(str(i)[:-4])
+            mplot(df, str(i)[:-4], folder, lines)
 
 def findWaves(df):
-
+    global lines
 # находим экстермумы
     df = df.round(2)
     df["Ind"] = df.index
@@ -68,7 +101,6 @@ def findWaves(df):
     p4 = 0
     p5 = 0
 
-
     for i, row2 in dfmm.iterrows():
         try:
             p1 = ww.Point(dfmm[i:i + 1])
@@ -77,19 +109,20 @@ def findWaves(df):
             p4 = ww.Point(dfmm[i+3:i+4])
             p5 = ww.Point(dfmm[i + 4:i + 5])
         except: return False
-        #print(p1.miniP,p2.maxiP,p3.miniP,p4.maxiP)
 
-        print(p1.miniP > p3.miniP, p1.miniP < p2.maxiP, p1.miniP < p4.maxiP,p4.maxiP < p2.maxiP, p4.maxiP > p3.miniP, p5.miniP < p3.miniP)
+        #print(p1.miniP > p3.miniP, p1.miniP < p2.maxiP, p1.miniP < p4.maxiP,p4.maxiP < p2.maxiP, p4.maxiP > p3.miniP, p5.miniP < p3.miniP)
 
         if (p1.miniP > p3.miniP) & (p1.miniP < p2.maxiP) & (p1.miniP < p4.maxiP) & (
             p4.maxiP < p2.maxiP) & (p4.maxiP > p3.miniP) & (p5.miniP < p3.miniP):
+            #print([(p1.date, p1.High)])
+            lines = [(p1.date,p1.Low), (p2.date,p2.High), (p3.date,p3.Low), (p4.date,p4.High), (p5.date,p5.Low)]
             return True
 
 
 
-#name = 'test'
-#patternName = 'test'
-#folder1 = '/home/linac/Рабочий стол/data/20210406_60d1d'
-#patterns.anyPattern(folder1, 'test', patternName)
+name = 'test'
+patternName = 'test'
+folder1 = '/home/linac/Рабочий стол/data/20210422_60d1d/'
+ww.serching(folder1, 'test', patternName)
 
 #start1(pd.read_csv('/home/linac/Рабочий стол/data/test/SKX.csv'))
