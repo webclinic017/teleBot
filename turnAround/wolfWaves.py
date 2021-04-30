@@ -8,6 +8,9 @@ import mplfinance as mpf
 import turnAround.wolfWaves as ww
 import turnAround.patterns as patterns
 import turnAround.points2 as points2
+import turnAround.stat as stat
+from datetime import date
+
 
 pd.options.mode.chained_assignment = None  # отключение уведомлений
 
@@ -77,7 +80,12 @@ def serching(folder, text, patternName):
 
         if findWaves(df):
                 #print(str(i)[:-4])
-            mplot(df, str(i)[:-4], folder, lines)
+            #mplot(df, str(i)[:-4], folder, lines) # график
+            # статистика
+            stat.addStat([str(i)[:-4], patternName, str(folder).replace('/home/linac/Рабочий стол/data/',''), 'noTrend', date.today(),
+                              float(df.Close[-1:]),
+                              float(df.Close[-1:]) * 1.07, float(df.Close[-1:]) * 0.93, float(df.Close[-1:])])
+            stat.checkStat()
 
 def findWaves(df):
     global lines
@@ -101,28 +109,31 @@ def findWaves(df):
     p4 = 0
     p5 = 0
 
-    for i, row2 in dfmm.iterrows():
-        try:
-            p1 = ww.Point(dfmm[i:i + 1])
-            p2 = ww.Point(dfmm[i + 1:i + 2])
-            p3 = ww.Point(dfmm[i + 2:i + 3])
-            p4 = ww.Point(dfmm[i+3:i+4])
-            p5 = ww.Point(dfmm[i + 4:i + 5])
-        except: return False
+    #for i, row2 in dfmm.iterrows():
+    try:
+        p1 = ww.Point(dfmm[-5:-4])
+        p2 = ww.Point(dfmm[-4:-3])
+        p3 = ww.Point(dfmm[-3:-2])
+        p4 = ww.Point(dfmm[-2:-1])
+        p5 = ww.Point(dfmm[-1:])
+    except: return False
+            #p1 = ww.Point(dfmm[i:i + 1])
+            #p2 = ww.Point(dfmm[i + 1:i + 2])
+            #p3 = ww.Point(dfmm[i + 2:i + 3])
+            #p4 = ww.Point(dfmm[i+3:i+4])
+            #p5 = ww.Point(dfmm[i + 4:i + 5])
+
 
         #print(p1.miniP > p3.miniP, p1.miniP < p2.maxiP, p1.miniP < p4.maxiP,p4.maxiP < p2.maxiP, p4.maxiP > p3.miniP, p5.miniP < p3.miniP)
 
-        if (p1.miniP > p3.miniP) & (p1.miniP < p2.maxiP) & (p1.miniP < p4.maxiP) & (
+    if (p1.miniP > p3.miniP) & (p1.miniP < p2.maxiP) & (p1.miniP < p4.maxiP) & (
             p4.maxiP < p2.maxiP) & (p4.maxiP > p3.miniP) & (p5.miniP < p3.miniP):
-            #print([(p1.date, p1.High)])
-            lines = [(p1.date,p1.Low), (p2.date,p2.High), (p3.date,p3.Low), (p4.date,p4.High), (p5.date,p5.Low)]
-            return True
+        lines = [(p1.date,p1.Low), (p2.date,p2.High), (p3.date,p3.Low), (p4.date,p4.High), (p5.date,p5.Low)]
+        return True
 
 
 
 name = 'test'
-patternName = 'test'
-folder1 = '/home/linac/Рабочий стол/data/20210422_60d1d/'
+patternName = 'WW'
+folder1 = '/home/linac/Рабочий стол/data/20210430_60d1d'
 ww.serching(folder1, 'test', patternName)
-
-#start1(pd.read_csv('/home/linac/Рабочий стол/data/test/SKX.csv'))

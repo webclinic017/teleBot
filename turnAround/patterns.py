@@ -368,8 +368,8 @@ def anyPattern(folder1, folderName, patternName):
              'Харами': [haramiUp, haramiDown],
              'Усиление': [raiseUp, raiseDown],
              'Пинцет': [pincetUp, pincetDown],
-             'Завеса': [zavesaUp, zavesaDown],
-             'test': [test]}
+             'Завеса': [zavesaUp, zavesaDown]}
+             #'test': [test]}
 
     for i in ticks:
         tick = i
@@ -400,7 +400,6 @@ def anyPattern(folder1, folderName, patternName):
                                   float(df.Close[-1:]),
                                   float(df.Close[-1:]) * 1.03, float(df.Close[-1:]) * 0.97, float(df.Close[-1:])])
                     stat.checkStat()
-
                     addPlot.mplot(points.start1(df), df, df.signal, str(i)[:-4], folder, folderName, patternName)
 
 #name = 'Разворот'
