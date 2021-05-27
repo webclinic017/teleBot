@@ -63,7 +63,7 @@ def mplot(df, ticker, folder, lines):
             mpf.make_addplot(pointsMin, type='scatter', color='k', markersize=50, marker='.')]
 
     fig, axes = mpf.plot(df, type='candle', style='yahoo', title=ticker, volume=True, mav=(8, 13, 21, 55),
-                         returnfig=True, addplot=apds, figscale=1.6, alines=lines)
+                         returnfig=True, addplot=apds, figscale=1.6, alines=lines, hlines=dict(hlines=lines[0][1], colors='k', linewidths=0.8))
     axes[2].set_title('ema 8,13,21,55 ')
     fig.savefig(folder + '/' + ticker + '.png')
     fig.clear()
@@ -80,11 +80,13 @@ def serching(folder, text, patternName):
 
         if findWaves(df):
                 #print(str(i)[:-4])
-            #mplot(df, str(i)[:-4], folder, lines) # график
+            mplot(df, str(i)[:-4], folder, lines) # график
             # статистика
             stat.addStat([str(i)[:-4], patternName, str(folder).replace('/home/linac/Рабочий стол/data/',''), 'noTrend', date.today(),
                               float(df.Close[-1:]),
                               float(df.Close[-1:]) * 1.07, float(df.Close[-1:]) * 0.93, float(df.Close[-1:])])
+        if (str(i) == str(ticks[-1])):
+            print(i, ' checking...')
             stat.checkStat()
 
 def findWaves(df):
@@ -134,6 +136,6 @@ def findWaves(df):
 
 
 name = 'test'
-patternName = 'WW'
-folder1 = '/home/linac/Рабочий стол/data/20210430_60d1d'
+patternName = 'WW'#
+folder1 = '/home/linac/Рабочий стол/data/20210527_60d1d'
 ww.serching(folder1, 'test', patternName)
