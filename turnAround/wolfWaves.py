@@ -9,6 +9,7 @@ import turnAround.wolfWaves as ww
 import turnAround.patterns as patterns
 import turnAround.points2 as points2
 import turnAround.stat as stat
+import turnAround.ib2 as ib2
 from datetime import date
 
 
@@ -85,6 +86,10 @@ def serching(folder, text, patternName):
             stat.addStat([str(i)[:-4], patternName, str(folder).replace('/home/linac/Рабочий стол/data/',''), 'noTrend', date.today(),
                               float(df.Close[-1:]),
                               float(df.Close[-1:]) * 1.07, float(df.Close[-1:]) * 0.93, float(df.Close[-1:])])
+            try:
+                ib2.starHere(str(i)[:-4], float(df.Close[-1:]), float(df.Close[-1:]) * 1.02, float(df.Close[-1:]) * 0.98)
+            except: pass
+
         if (str(i) == str(ticks[-1])):
             print(i, ' checking...')
             stat.checkStat()
@@ -137,5 +142,5 @@ def findWaves(df):
 
 name = 'test'
 patternName = 'WW'#
-folder1 = '/home/linac/Рабочий стол/data/20210527_60d1d'
+folder1 = '/home/linac/Рабочий стол/data/20210611_60d1d'
 ww.serching(folder1, 'test', patternName)

@@ -56,3 +56,5 @@ def download(period1, interval1, key):
                 f.write(data.loc[ticker].T.to_csv(sep=','))
             f.close()
     return [path, pathUp, pathDown, folderName]
+
+#download('10000d', '1d', '0')
