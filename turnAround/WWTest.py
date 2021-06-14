@@ -32,7 +32,7 @@ class Point():
         self.Close = int(df.Close)
 
 def addStat(list):
-    file = open('/home/linac/Рабочий стол/data/stat/testWW32.csv', 'a')
+    file = open('/home/linac/Рабочий стол/data/stat/testWWP5Close.csv', 'a')
     with file:
         writer = csv.writer(file)
         writer.writerow(list)
@@ -57,7 +57,6 @@ def mplot(df, ticker, folder, lines):
 
 
 def serching(folder, text, patternName):
-    print('searching')
     global lines
     global ticker
     ticks = tickers(folder)
@@ -76,7 +75,6 @@ def serching(folder, text, patternName):
 def findWaves(df):
     global lines
     global ticker
-    print('findWaves')
 # находим экстермумы
     df = df.round(2)
     df["Ind"] = df.index
@@ -107,10 +105,12 @@ def findWaves(df):
 
         if (p1.miniP > p3.miniP) & (p1.miniP < p2.maxiP) & (p1.miniP < p4.maxiP) & (
             p4.maxiP < p2.maxiP) & (p4.maxiP > p3.miniP) & (p5.miniP < p3.miniP):
-            p6 = df[p5.ind + 1:p5.ind + 2] # берем следующую свечу после p5
+            p6 = df[p5.ind:p5.ind + 1] # берем свечу p5
+
+           # p6 = df[p5.ind + 1:p5.ind + 2] # берем следующую свечу после p5
 
             for str, row3 in df[p5.ind+2:].iterrows():
-                if ((float(p6.Close/row3.High) *100) <= 97):
+                if ((float(p6.Close/row3.High) *100) <= 98):
                     addStat([ticker,p6.Date[-1:].values[0],row3.Date,float(p6.Close),'',row3.High,int(p6.Ind),row3.Ind,(int(row3.Ind-p6.Ind)),'Profit'])
                     break
                 if ((float(p6.Close/row3.High) *100) >= 102):
@@ -118,7 +118,7 @@ def findWaves(df):
                     break
 
 
-name = 'test'
-patternName = 'WW'
-folder1 = '/home/linac/Рабочий стол/data/20210607_10000d1d/'
-serching(folder1, 'test', patternName)
+#name = 'test'
+#patternName = 'WW'
+#folder1 = '/home/linac/Рабочий стол/data/20210607_10000d1d/'
+#serching(folder1, 'test', patternName)
